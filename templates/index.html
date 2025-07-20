@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Tools</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</head>
+
+<body>
+    <!-- Player dropdown (for 'Get Details') -->
+    <label for="playerSelect">Select Player:</label>
+    <select id="playerSelect"></select>
+    <input type="text" id="playerTextBox" name="playerTextBox" title="Id of the player">
+
+    <!-- 1. Games Button and Dropdown -->
+    <button onclick="onClickGamesBtn()">Games</button>
+    <br />
+
+    <select id="gamesSelect" name="gamesSelect" title="gamesSelect" size="10">
+    </select>
+    <br />
+
+    <hr />
+
+    <!-- Liquipedia textarea to fill -->
+    <textarea id="mapTextArea"></textarea>
+    <button onclick="onClickCopyToClipboard()">Copy</button>
+    <button onclick="onClickReverseLP()">Reverse</button>
+    <br />
+    <span id="lpDateTime"></span> <button onclick="onClickCopyLpDateTime()">Copy DateTime</button>
+    <br />
+    <span id="lpOpponent1"></span> <br />
+    <span id="lpOpponent2"></span> <button onclick="onClickViewGames()">View Games</button>
+    <br />
+
+    <!-- Map details display -->
+    <textarea id="mapDetails" title="mapDetails"></textarea>
+
+</body>
+
+</html>

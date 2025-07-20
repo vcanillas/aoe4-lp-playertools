@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+select {
+    width: 300px;
+    margin: 10px 0;
+}
+
+#gamesSelect {
+    width: 900px;
+}
+
+#mapTextArea {
+    width: 300px;
+    height: 100px;
+    margin: 10px 0;
+}
+
+#mapDetails {
+    width: 400px;
+    height: 700px;
+    margin: 10px 0;
+}
+
+button {
+    margin: 10px 0;
+}
