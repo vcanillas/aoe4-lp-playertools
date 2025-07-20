@@ -78,7 +78,7 @@ def process_data(data, player1_id) -> List[model.Map]:
                 player.set_lp_name()
                 player.set_civilization_id(member.get("civilization_id"))
 
-            team_id = member.get("teamid")
+            team_id = result.get("resulttype")  # Team_id based on resulttype
 
             # Find team
             team = next((team for team in match.teams if team.team_id == team_id), None)
@@ -140,15 +140,15 @@ def map_route():
     # Call & save result (for cache)
     if settings.USE_MOCK:
         api_result = mock()
-        player_id = 1
+        player_id = 11628131
     else:
         api_result = call(url, params)
 
     maps = process_data(api_result, player_id)
 
     map_dicts = [item.to_dict() for item in maps]
-
     if settings.DEBUG:
+        print(player_id)
         with open(f"./flux/flux-{player_id}.json", "w") as json_file:
             json.dump(api_result, json_file, indent=2)
 

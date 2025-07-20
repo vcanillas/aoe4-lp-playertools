@@ -136,10 +136,20 @@ function onClickReverseLP() {
     keyValues['civs1'] = civs2;
     keyValues['civs2'] = civs1;
 
+    // Swap players if available
+    if ('players1' in keyValues) {
+        const players1 = keyValues['players1'];
+        const players2 = keyValues['players2'];
+        keyValues['players1'] = players2;
+        keyValues['players2'] = players1;
+    }
+
     // Rebuild template
     const newTemplate = `{{Map
         |map=${keyValues['map']}|winner=${keyValues['winner']}
+        ${'players1' in keyValues ? `|players1=${keyValues['players1']}\n` : ''}
         |civs1=${keyValues['civs1']}
+        ${'players2' in keyValues ? `|players2=${keyValues['players2']}\n` : ''}
         |civs2=${keyValues['civs2']}
     }}`;
 

@@ -114,7 +114,7 @@ class Map:
 
             # Set the summary string
             self.summary = (
-                f"{'' if len(self.teams) == 2 else 'Multi -'} {self.map_lp} - "
+                f"{'' if len(self.teams[0].players) == 1 else 'Multi -'} {self.map_lp} - "
                 f"{alias1} {'👑 ' if winner1 else ''} ({lp1}) ||| "
                 f"{alias2} {'👑 ' if winner2 else ''}({lp2}) - "
                 f"{self.date_lp.split("{{")[0].strip()}"
@@ -122,31 +122,43 @@ class Map:
 
         def set_lp():
 
+            multi = False
+
             winning_team_index = None
             for i, team in enumerate(self.teams):
+                if len(team.players) > 1:
+                    multi = True
                 if team.result_type == 1:
                     winning_team_index = i + 1
                     break
 
+            players1 = ""
             civs1 = ""
+            players2 = ""
             civs2 = ""
 
             for player in self.teams[0].players:
                 civs1 += player.civilization_lp + ", "
+                players1 += player.name_lp + ", "
 
             for player in self.teams[1].players:
                 civs2 += player.civilization_lp + ", "
+                players2 += player.name_lp + ", "
 
             # Important: Remove trailing ", "
             civs1 = civs1.rstrip(", ")
             civs2 = civs2.rstrip(", ")
+            players1 = players1.rstrip(", ")
+            players2 = players2.rstrip(", ")
 
             output = (
                 "{{Map\n"
-                f"        |map={self.map_lp}|winner={winning_team_index}\n"
-                f"        |civs1={civs1}\n"
-                f"        |civs2={civs2}\n"
-                "    }}"
+                + (f"        |map={self.map_lp}|winner={winning_team_index}\n")
+                + (f"        |players1={players1}\n" if multi else "")
+                + (f"        |civs1={civs1}\n")
+                + (f"        |players2={players2}\n" if multi else "")
+                + (f"        |civs2={civs2}\n")
+                + ("    }}")
             )
 
             self.lp = output
