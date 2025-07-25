@@ -56,6 +56,8 @@ PLAYERS = {
     8130680: "Scatterbrained",
     7614140: "Msn.dk",
     11628131: "kjj",
+    7647757: "Kyo",
+    3671968: "Matiz",
 }
 
 
@@ -75,12 +77,15 @@ MAPS = {
     "enlightened_horizon": "Enlightened Horizon",
     "excavation": "Excavation",
     "gorge": "Gorge",
+    "lipany": "Lipany",
     "hideout": "Hideout",
     "hill_and_dale": "Hill and Dale",
     "kawassan": "Kawasan",
     "king_of_hill": "King of the Hill",
     "regions": "Regions",
     "underhill": "Carmel",
+    "relic_river": "Relic River",
+    "alopecia": "Alopecia",
 }
 
 # Sort the list by the 'name' key

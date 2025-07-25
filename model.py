@@ -37,6 +37,7 @@ class Map:
         self.matchtype_id = None
         self.start_game_time = None
         self.date_lp = None
+        self.date = None
         self.completion_time = None
         self.option_raw = None
         self.map_name_raw = None
@@ -48,7 +49,10 @@ class Map:
 
     def set_start_game_time(self, value):
         self.start_game_time = value
-        self.date_lp = static.format_timestamp(value)
+        self.date = static.format_timestamp(value, timezone_str="CET")
+        self.date_lp = static.format_timestamp(
+            value, display_abbr=True, round_to_nearest_15=True
+        )
 
     def set_option_raw(self, value):
         # self.option_raw = value
@@ -61,7 +65,7 @@ class Map:
     def to_dict(self):
         return static._to_dict_recursive(self)
 
-    def set_final(self, player1_id: int):
+    def complete_data(self, player1_id: int):
 
         def reorder(player1_id: int):
             # Find the team and index where the player is located
@@ -114,10 +118,11 @@ class Map:
 
             # Set the summary string
             self.summary = (
-                f"{'' if len(self.teams[0].players) == 1 else 'Multi -'} {self.map_lp} - "
+                f"{'' if len(self.teams[0].players) == 1 else 'Multi - '}"
+                f"{self.date} "
                 f"{alias1} {'👑 ' if winner1 else ''} ({lp1}) ||| "
                 f"{alias2} {'👑 ' if winner2 else ''}({lp2}) - "
-                f"{self.date_lp.split("{{")[0].strip()}"
+                f"{self.map_lp}"
             )
 
         def set_lp():
@@ -138,18 +143,18 @@ class Map:
             civs2 = ""
 
             for player in self.teams[0].players:
-                civs1 += player.civilization_lp + ", "
-                players1 += player.name_lp + ", "
+                civs1 += player.civilization_lp + ","
+                players1 += player.name_lp + ","
 
             for player in self.teams[1].players:
-                civs2 += player.civilization_lp + ", "
-                players2 += player.name_lp + ", "
+                civs2 += player.civilization_lp + ","
+                players2 += player.name_lp + ","
 
             # Important: Remove trailing ", "
-            civs1 = civs1.rstrip(", ")
-            civs2 = civs2.rstrip(", ")
-            players1 = players1.rstrip(", ")
-            players2 = players2.rstrip(", ")
+            civs1 = civs1.rstrip(",")
+            civs2 = civs2.rstrip(",")
+            players1 = players1.rstrip(",")
+            players2 = players2.rstrip(",")
 
             output = (
                 "{{Map\n"

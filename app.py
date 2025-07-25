@@ -91,7 +91,7 @@ def process_data(data, player1_id) -> List[model.Map]:
             team.players.append(player)
 
         # Set Summary at the end
-        if match.set_final(player1_id):
+        if match.complete_data(player1_id):
             matches.append(match)
 
     return matches

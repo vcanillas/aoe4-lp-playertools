@@ -14,9 +14,11 @@ def _to_dict_recursive(obj):
 
 
 @staticmethod
-def format_timestamp(timestamp, timezone_str="GMT"):
+def format_timestamp(
+    timestamp, timezone_str="GMT", display_abbr=False, round_to_nearest_15=False
+):
     import pytz
-    from datetime import datetime
+    from datetime import datetime, timedelta
 
     if timestamp is None:
         return ""
@@ -24,11 +26,31 @@ def format_timestamp(timestamp, timezone_str="GMT"):
     # Convert timestamp to datetime in specified timezone
     tz = pytz.timezone(timezone_str)
     dt = datetime.fromtimestamp(timestamp, tz)
+
+    if round_to_nearest_15:
+        minutes = dt.minute
+        mod = minutes % 15
+
+        if mod <= 10:
+            # Truncate down
+            new_minutes = minutes - mod
+            dt = dt.replace(minute=new_minutes, second=0, microsecond=0)
+        else:
+            # Round up
+            new_minutes = minutes + (15 - mod)
+            dt = dt.replace(minute=0, second=0, microsecond=0) + timedelta(
+                minutes=new_minutes
+            )
+
     # Format date and time
     date_str = dt.strftime("%B %d, %Y - %H:%M")
-    # Get timezone abbreviation
-    abbr = dt.strftime("%Z")
-    return f"{date_str} {{{{Abbr/{abbr}}}}}"
+
+    if display_abbr:
+        # Get timezone abbreviation
+        abbr = dt.strftime("%Z")
+        return f"{date_str} {{{{Abbr/{abbr}}}}}"
+    else:
+        return date_str
 
 
 @staticmethod
