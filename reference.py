@@ -1,3 +1,6 @@
+import json
+import os
+
 CIVILIZATIONS = {
     106553: "eng",
     129267: "mon",
@@ -20,73 +23,27 @@ CIVILIZATIONS = {
 }
 
 
-PLAYERS = {
-    8432378: "Anotand",
-    4583101: "Baltune",
-    8139502: "Beasty",
-    6946065: "Bee",
-    520130: "Chuckfrancis",
-    7090781: "coRe",
-    6943917: "DeMu",
-    8945737: "Gullyd3ck3l",
-    16794502: "JIF Music",
-    3813060: "kiljardi",
-    3877183: "LaSh",
-    22831107: "Learning Ottoman",
-    8354416: "loueMT",
-    8272651: "LucifroN7",
-    6961598: "MeomaikA",
-    1102458: "MarineLorD",
-    9298419: "Numudan",
-    1445943: "Ourk",
-    8446710: "1puppypaw",
-    9469627: "Remilia Scarlet",
-    2347873: "SAS",
-    4703134: "Starflark",
-    2942077: "Valdemar",
-    1571336: "viBalton",
-    60328: "VortiX",
-    8442107: "Wam01",
-    14611083: "Deniskya",
-    1408680: "Antoxa",
-    3553176: "KoMyN",
-    18504557: "Realt1ger",
-    20194124: "Fluffy",
-    9101896: "HOMS-.-SENPAI",
-    8130680: "Scatterbrained",
-    7614140: "Msn.dk",
-    11628131: "kjj",
-    7647757: "Kyo",
-    3671968: "Matiz",
-}
+def get_Players():
+    data = load_data("players.json")
+    # Convert keys from string to int
+    int_keys_data = {int(k): v for k, v in data.items()}
+    return int_keys_data
 
 
-MAPS = {
-    "ancient_spires": "Ancient Spires",
-    "arid_plains": "Sunkenlands",
-    "baldland": "Baldland",
-    "cliffside": "Cliffside",
-    "dry_arabia": "Dry Arabia",
-    "egcdryriver": "Dry River",
-    "egcfrisianmarshesmapname": "Frisian Marshes",
-    "egcholyisland": "Holy Island",
-    "egcrelicriver": "Relic River",
-    "elitegorge": "Gorge",
-    "eliteislands": "Archipelago",
-    "elitescandinavia": "Scandinavia",
-    "enlightened_horizon": "Enlightened Horizon",
-    "excavation": "Excavation",
-    "gorge": "Gorge",
-    "lipany": "Lipany",
-    "hideout": "Hideout",
-    "hill_and_dale": "Hill and Dale",
-    "kawassan": "Kawasan",
-    "king_of_hill": "King of the Hill",
-    "regions": "Regions",
-    "underhill": "Carmel",
-    "relic_river": "Relic River",
-    "alopecia": "Alopecia",
-}
+def get_Maps():
+    return load_data("maps.json")
+
+
+@staticmethod
+def load_data(filename):
+    with open(os.path.join(os.path.dirname(__file__), "data", filename), "r") as f:
+        return json.load(f)
+
+
+@staticmethod
+def save_data(filename, data):
+    with open(os.path.join(os.path.dirname(__file__), "data", filename), "w") as f:
+        json.dump(data, f, indent=4)
 
 # Sort the list by the 'name' key
 # sorted_items = sorted(MAPS.items(), key=lambda item: item[0].lower())

@@ -1,7 +1,7 @@
 import requests, json
 from typing import List
 from flask import Flask, request, jsonify, render_template
-from reference import PLAYERS
+import reference
 import model, settings
 
 app = Flask(__name__)
@@ -99,12 +99,11 @@ def process_data(data, player1_id) -> List[model.Map]:
 
 def get_all_players(matches: List[model.Map]):
     # Make a shallow copy of PLAYERS to avoid modifying the original list
-    updated_players = PLAYERS.copy()
+    updated_players = reference.get_Players().copy()
 
     for match in matches:
         for team in match.teams:
             for player in team.players:
-                player_id = player.profile_id
                 # If player not already in PLAYERS
                 if player.profile_id not in updated_players:
                     # Create new player object
@@ -113,18 +112,46 @@ def get_all_players(matches: List[model.Map]):
     return updated_players
 
 
-@app.route("/get_players", methods=["GET"])
+@app.route("/players", methods=["GET"])
 def get_players():
-    return jsonify(PLAYERS)
+    return reference.get_Players()
 
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/player", methods=["POST"])
+def add_player():
+    players = reference.get_Players()
+    new_id = request.json.get("id")
+    new_value = request.json.get("value")
+    if new_id in players:
+        return jsonify({"error": "ID already exists"}), 400
+    players[new_id] = new_value
+
+    sorted_maps = dict(sorted(players.items(), key=lambda item: item[1]))
+    reference.save_data("players.json", sorted_maps)
+    return jsonify({"message": "Player added"}), 201
+
+
+@app.route("/maps", methods=["GET"])
+def get_maps():
+    return reference.get_Maps()
+
+
+@app.route("/map", methods=["POST"])
+def add_map():
+    maps = reference.get_Maps()
+    new_id = request.json.get("id")
+    new_value = request.json.get("value")
+    if new_id in maps:
+        return jsonify({"error": "ID already exists"}), 400
+    maps[new_id] = new_value
+
+    sorted_maps = dict(sorted(maps.items(), key=lambda item: item[1]))
+    reference.save_data("maps.json", sorted_maps)
+    return jsonify({"message": "Civilization added"}), 201
 
 
 @app.route("/games", methods=["POST"])
-def map_route():
+def game_route():
 
     data = request.get_json()
     player_id = int(data.get("player_id"))
@@ -160,6 +187,16 @@ def map_route():
     all_players = get_all_players(maps)
 
     return jsonify({"players": all_players, "maps": map_dicts})
+
+
+@app.route("/admin")
+def home():
+    return render_template("admin.html")
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 
 if __name__ == "__main__":

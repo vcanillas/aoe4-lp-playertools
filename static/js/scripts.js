@@ -1,5 +1,5 @@
 // Fetch all players on page load
-fetch('/get_players')
+fetch('/players')
     .then(res => res.json())
     .then(data => {
         players = data;
@@ -147,10 +147,8 @@ function onClickReverseLP() {
     // Rebuild template
     const newTemplate = `{{Map
         |map=${keyValues['map']}|winner=${keyValues['winner']}
-        ${'players1' in keyValues ? `|players1=${keyValues['players1']}\n` : ''}
-        |civs1=${keyValues['civs1']}
-        ${'players2' in keyValues ? `|players2=${keyValues['players2']}\n` : ''}
-        |civs2=${keyValues['civs2']}
+${'players1' in keyValues ? `        |players1=${keyValues['players1']}\n` : ''}        |civs1=${keyValues['civs1']}
+${'players2' in keyValues ? `        |players2=${keyValues['players2']}\n` : ''}        |civs2=${keyValues['civs2']}
     }}`;
 
     textarea.value = newTemplate;

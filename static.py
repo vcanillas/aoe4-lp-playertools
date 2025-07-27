@@ -1,4 +1,4 @@
-from reference import PLAYERS, MAPS, CIVILIZATIONS
+from reference import get_Maps, get_Players, CIVILIZATIONS
 
 
 @staticmethod
@@ -64,7 +64,7 @@ def get_civilization_lp(id):
 @staticmethod
 def get_map_lp(id, label):
     try:
-        return MAPS.get(id, f"### Unknown - {id} - {label}")
+        return get_Maps().get(id, f"### Unknown - {id} - {label}")
     except KeyError:
         return f"Unknow_Key ### - {id} - {label}"
 
@@ -72,7 +72,7 @@ def get_map_lp(id, label):
 @staticmethod
 def get_player_name_lp(id, label):
     try:
-        return PLAYERS.get(id, f"{label} - ### Unknown - {id}")
+        return get_Players().get(id, f"{label} - ### Unknown - {id}")
     except KeyError:
         return f"Unknow_Key ### - {id} - {label} - "
 
