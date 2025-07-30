@@ -34,6 +34,15 @@
         <button type="submit">Add Player</button>
     </form>
 
+    <h1>Search Players</h1>
+    <form id="searchPlayersForm" action="/search" method="POST">
+        <label for="searchPlayerValue">Search:</label>
+        <input type="text" id="searchPlayerValue" name="value" required>
+        <br>
+        <button type="submit">Search Player</button>
+        <div id="searchPlayerResutlt"></div>
+    </form>
+
     <script>
         document.getElementById('mapsForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -66,6 +75,30 @@
                 .then(data => alert(data))
                 .catch(error => alert('Error: ' + error));
         });
+
+        document.getElementById('searchPlayersForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const value = document.getElementById('searchPlayerValue').value;
+            fetch('/search_player', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: value })
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const players = JSON.parse(data);
+                    let htmlContent = '';
+                    players.forEach(player => {
+                        htmlContent += `<p>${player.name} -- ${player.profile_id} -- ${player.country || 'N/A'}</p>`;
+                    });
+
+                    document.getElementById('searchPlayerResutlt').innerHTML = htmlContent;
+                })
+                .catch(error => alert('Error: ' + error));
+        });
+
     </script>
 </body>
 

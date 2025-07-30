@@ -1,8 +1,8 @@
-import requests, json
+import json
+
 from typing import List
 from flask import Flask, request, jsonify, render_template
-import reference
-import model, settings
+import reference, static, model, settings
 
 app = Flask(__name__)
 
@@ -11,17 +11,6 @@ def mock():
     # Mock response data, typically loaded from a.json
     with open("./flux/flux-None.json", "r", encoding="utf-8") as f:
         return json.load(f)
-
-
-def call(url, params) -> str:
-    # Make the GET request
-    response = requests.get(url, params=params)
-
-    # Check and print response
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Error:", response.status_code, response.text)
 
 
 def process_data(data, player1_id) -> List[model.Map]:
@@ -104,7 +93,7 @@ def get_all_players(matches: List[model.Map]):
     for match in matches:
         for team in match.teams:
             for player in team.players:
-                # If player not already in PLAYERS
+                # If player not already in players
                 if player.profile_id not in updated_players:
                     # Create new player object
                     updated_players[player.profile_id] = player.alias
@@ -129,6 +118,25 @@ def add_player():
     sorted_maps = dict(sorted(players.items(), key=lambda item: item[1]))
     reference.save_data("players.json", sorted_maps)
     return jsonify({"message": "Player added"}), 201
+
+
+@app.route("/search_player", methods=["POST"])
+def search_player():
+    text = request.json.get("text")
+    url = settings.AOE4WORLD_URL_API
+    params = {"query": text}
+    api_result = static.call(url, params)
+
+    result = []
+    for player in api_result["players"]:
+        result_player = {
+            "name": player.get("name"),
+            "profile_id": player.get("profile_id"),
+            "country": player.get("country"),
+        }
+        result.append(result_player)
+
+    return jsonify(result)
 
 
 @app.route("/maps", methods=["GET"])
@@ -169,7 +177,7 @@ def game_route():
         api_result = mock()
         player_id = 11628131
     else:
-        api_result = call(url, params)
+        api_result = static.call(url, params)
 
     maps = process_data(api_result, player_id)
 

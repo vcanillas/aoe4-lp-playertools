@@ -1,5 +1,5 @@
 from reference import get_Maps, get_Players, CIVILIZATIONS
-
+import requests
 
 @staticmethod
 def _to_dict_recursive(obj):
@@ -99,3 +99,14 @@ def decode_zlib_base64_tojson(encoded_data):
         except:
             break
     return None
+
+@staticmethod
+def call(url, params) -> str:
+    # Make the GET request
+    response = requests.get(url, params=params)
+
+    # Check and print response
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("Error:", response.status_code, response.text)
