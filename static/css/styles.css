@@ -22,6 +22,10 @@ select {
     white-space: pre;
 }
 
+#lpOpponent1{
+    font-weight: bold;
+}
+
 button {
     margin: 10px 0;
 }
@@ -33,11 +37,11 @@ pre {
     margin: 20px; 
 }
 .json-key {
-    color: brown;
+    color: #0451A5;
 }
 .json-value {
-    color: navy;
+    color: #098658;
 }
 .json-string {
-    color: olive;
+    color: #A31515;
 }

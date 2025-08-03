@@ -50,25 +50,27 @@ function updatePlayerUI() {
 function updateGamesSelectUI() {
     if (!maps) return;  // Check if maps data exists
 
+    gamesSelect = document.getElementById('gamesSelect');
+
     Object.keys(maps).forEach(mapKey => {
         const map = maps[mapKey];
 
         const listItem = document.createElement('option');
         listItem.textContent = map.summary; // Display the map name in the list
-        listItem.addEventListener('click', function () {
-            handleMapClick(map);
-        });
+        listItem._mapData = map;
         gamesSelect.appendChild(listItem);
     });
 
-    let player_id = maps[0].teams[0].players[0].profile_id;
-    document.getElementById("playerSelect").value = player_id;
+    gamesSelect.addEventListener('change', onChangeGamesSelect);
 
+    let player_id = maps[0].teams[0].players[0].profile_id;
+    document.getElementById("playerSelect").value = player_id; // Auto-selected on the listbox
 }
 
 function clearScreen() {
     document.getElementById("playerTextBox").value = "";
     document.getElementById('gamesSelect').innerHTML = "";
+    document.getElementById('gamesSelect').removeEventListener("change", onChangeGamesSelect)
     document.getElementById('lpOpponent1').innerHTML = "";
     document.getElementById('lpOpponent2').innerHTML = "";
     document.getElementById('lpDateTime').innerHTML = "";
@@ -76,15 +78,26 @@ function clearScreen() {
     document.getElementById('allDataArea').value = "";
 }
 
-function handleMapClick(selectedMap) {
-    currentMap = selectedMap;
-
-    document.getElementById('mapTextArea').value = selectedMap.lp.content;
-    document.getElementById('allDataArea').innerHTML = library.json.prettyPrint(selectedMap);
-    document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
-    document.getElementById('lpOpponent1').innerHTML = selectedMap.teams[0].players[0].name_lp;
-    document.getElementById('lpOpponent2').innerHTML = selectedMap.teams[1].players[0].name_lp;
+function getIcons(civ) {
+    return `<img src="${staticUrl}icons/${civ}.png" alt="${civ}" style="width: 30px" /> - `;
 }
+
+function onChangeGamesSelect() {
+    const selectedIndex = gamesSelect.selectedIndex;
+    const selectedOption = gamesSelect.options[selectedIndex];
+
+    const selectedMap = selectedOption._mapData;
+    if (selectedMap) {
+        currentMap = selectedMap; // Store for onClickViewGames()
+
+        document.getElementById('mapTextArea').value = selectedMap.lp.content;
+        document.getElementById('allDataArea').innerHTML = library.json.prettyPrint(selectedMap);
+        document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
+        document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp) + selectedMap.teams[0].players[0].name_lp;
+        document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp) + selectedMap.teams[1].players[0].name_lp;
+    }
+}
+
 
 function onClickGamesBtn() {
 

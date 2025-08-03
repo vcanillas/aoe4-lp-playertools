@@ -1,5 +1,5 @@
-import json
-import os
+from utils.static import load_data
+
 
 CIVILIZATIONS = {
     106553: "eng",
@@ -32,22 +32,3 @@ def get_Players():
 
 def get_Maps():
     return load_data("maps.json")
-
-
-@staticmethod
-def load_data(filename):
-    with open(os.path.join(os.path.dirname(__file__), "data", filename), "r") as f:
-        return json.load(f)
-
-
-@staticmethod
-def save_data(filename, data):
-    with open(os.path.join(os.path.dirname(__file__), "data", filename), "w") as f:
-        json.dump(data, f, indent=4)
-
-# Sort the list by the 'name' key
-# sorted_items = sorted(MAPS.items(), key=lambda item: item[0].lower())
-
-# # Print the sorted list
-# for key, name in sorted_items:
-#     print(f"'{key}': '{name}',")

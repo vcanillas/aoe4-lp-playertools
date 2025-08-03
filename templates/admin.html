@@ -40,7 +40,17 @@
         <input type="text" id="searchPlayerValue" name="value" required>
         <br>
         <button type="submit">Search Player</button>
-        <div id="searchPlayerResutlt"></div>
+        <div id="searchPlayerResult"></div>
+    </form>
+
+    <h1>Participant Start.gg</h1>
+    <form id="participantsListForm" action="/participants" method="GET">
+        <label for="eventIdValue">Search:</label>
+        <input type="text" id="eventIdValue" name="value" required>
+        <input type="checkbox" id="participantFlag" name="flag">
+        <br>
+        <button type="submit">List Participant</button>
+        <div id="participantListResult"></div>
     </form>
 
     <script>
@@ -94,9 +104,24 @@
                         htmlContent += `<p>${player.name} -- ${player.profile_id} -- ${player.country || 'N/A'}</p>`;
                     });
 
-                    document.getElementById('searchPlayerResutlt').innerHTML = htmlContent;
+                    document.getElementById('searchPlayerResult').innerHTML = htmlContent;
                 })
                 .catch(error => alert('Error: ' + error));
+        });
+
+        document.getElementById('participantsListForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const value = document.getElementById('eventIdValue').value;
+            const withFlag = document.getElementById('participantFlag').checked ? 1 : 0;
+
+            fetch(`/participants?id=${value}&with_flag=${withFlag}`, {
+                method: 'GET'
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('participantListResult').innerHTML = data;
+            })
+            .catch(error => alert('Error: ' + error));
         });
 
     </script>

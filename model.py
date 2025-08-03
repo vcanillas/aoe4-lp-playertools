@@ -1,5 +1,12 @@
 from typing import List
-import static
+from utils import static, lp
+
+
+class LPItem:
+    def __init__(self):
+        self.content = None
+        self.date = None
+        self.map = None
 
 
 class Player:
@@ -12,11 +19,11 @@ class Player:
         self.civilization_lp = None
 
     def set_lp_name(self):
-        self.name_lp = static.get_player_name_lp(self.profile_id, self.alias)
+        self.name_lp = lp.get_player_name_lp(self.profile_id, self.alias)
 
     def set_civilization_id(self, value):
         self.civilization_id = value
-        self.civilization_lp = static.get_civilization_lp(value)
+        self.civilization_lp = lp.get_civilization_lp(value)
 
     def to_dict(self):
         return static._to_dict_recursive(self)
@@ -36,21 +43,19 @@ class Map:
     def __init__(self):
         self.matchtype_id = None
         self.start_game_time = None
-        self.date_lp = None
         self.date = None
         self.completion_time = None
         self.option_raw = None
         self.map_name_raw = None
         self.map_name = None
-        self.map_lp = None
         self.summary = None
-        self.lp = None
+        self.lp: LPItem = LPItem()
         self.teams: List[Team] = []
 
     def set_start_game_time(self, value):
         self.start_game_time = value
         self.date = static.format_timestamp(value, timezone_str="CET")
-        self.date_lp = static.format_timestamp(
+        self.lp.date = static.format_timestamp(
             value, display_abbr=True, round_to_nearest_15=True
         )
 
@@ -60,7 +65,7 @@ class Map:
         if option is not None:
             self.map_name = option.get("localizedMapName")
             self.map_name_raw = option.get("mapName")
-            self.map_lp = static.get_map_lp(self.map_name_raw, self.map_name)
+            self.lp.map = lp.get_map_lp(self.map_name_raw, self.map_name)
 
     def to_dict(self):
         return static._to_dict_recursive(self)
@@ -97,7 +102,7 @@ class Map:
         def set_summary():
             # Check if there are teams
             if not self.teams:
-                self.summary = f"{self.map_lp} - No teams available"
+                self.summary = f"{self.lp.map} - No teams available"
                 return
 
             # For simplicity, assume two teams
@@ -120,9 +125,9 @@ class Map:
             self.summary = (
                 f"{'' if len(self.teams[0].players) == 1 else 'Multi - '}"
                 f"{self.date} "
-                f"{alias1} {'👑 ' if winner1 else ''} ({lp1}) ||| "
-                f"{alias2} {'👑 ' if winner2 else ''}({lp2}) - "
-                f"{self.map_lp}"
+                f"{alias1} {'👑 ' if winner1 else ''} ({lp1}) --- "
+                f"{alias2} {'👑 ' if winner2 else ''} ({lp2}) - "
+                f"{self.lp.map}"
             )
 
         def set_lp():
@@ -158,7 +163,7 @@ class Map:
 
             output = (
                 "{{Map\n"
-                + (f"        |map={self.map_lp}|winner={winning_team_index}\n")
+                + (f"        |map={self.lp.map}|winner={winning_team_index}\n")
                 + (f"        |players1={players1}\n" if multi else "")
                 + (f"        |civs1={civs1}\n")
                 + (f"        |players2={players2}\n" if multi else "")
@@ -166,7 +171,7 @@ class Map:
                 + ("    }}")
             )
 
-            self.lp = output
+            self.lp.content = output
 
         if len(self.teams) > 1:
             reorder(player1_id)

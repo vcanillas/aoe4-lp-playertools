@@ -1,5 +1,5 @@
-from reference import get_Maps, get_Players, CIVILIZATIONS
-import requests
+import json, os
+
 
 @staticmethod
 def _to_dict_recursive(obj):
@@ -54,30 +54,6 @@ def format_timestamp(
 
 
 @staticmethod
-def get_civilization_lp(id):
-    try:
-        return CIVILIZATIONS.get(id, f"### Unknown - {id}")
-    except KeyError:
-        return f"Unknow_Key ### - {id}"
-
-
-@staticmethod
-def get_map_lp(id, label):
-    try:
-        return get_Maps().get(id, f"### Unknown - {id} - {label}")
-    except KeyError:
-        return f"Unknow_Key ### - {id} - {label}"
-
-
-@staticmethod
-def get_player_name_lp(id, label):
-    try:
-        return get_Players().get(id, f"{label} - ### Unknown - {id}")
-    except KeyError:
-        return f"Unknow_Key ### - {id} - {label} - "
-
-
-@staticmethod
 def decode_zlib_base64_tojson(encoded_data):
     import base64, zlib, json
 
@@ -100,13 +76,14 @@ def decode_zlib_base64_tojson(encoded_data):
             break
     return None
 
-@staticmethod
-def call(url, params) -> str:
-    # Make the GET request
-    response = requests.get(url, params=params)
 
-    # Check and print response
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Error:", response.status_code, response.text)
+@staticmethod
+def load_data(filename: str):
+    with open(os.path.join(os.getcwd(), "data", filename), "r") as f:
+        return json.load(f)
+
+
+@staticmethod
+def save_data(filename: str, data):
+    with open(os.path.join(os.getcwd(), "data", filename), "w") as f:
+        json.dump(data, f, indent=4)
