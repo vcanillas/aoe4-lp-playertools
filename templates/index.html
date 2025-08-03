@@ -29,8 +29,10 @@
 
     <!-- Liquipedia textarea to fill -->
     <textarea id="mapTextArea"></textarea>
-    <button onclick="onClickCopyToClipboard()">Copy</button>
+    
+    <button onclick="onClickCopyToClipboard()">Copy<span id="validCopy" style="display:none;">✅</span></button>
     <button onclick="onClickReverseLP()">Reverse</button>
+    
     <br />
     <span id="lpDateTime"></span> <button onclick="onClickCopyLpDateTime()">Copy DateTime</button>
     <br />
@@ -39,7 +41,7 @@
     <br />
 
     <!-- Map details display -->
-    <textarea id="mapDetails" title="mapDetails"></textarea>
+    <pre><code id="allDataArea"></code></pre>
 
 </body>
 

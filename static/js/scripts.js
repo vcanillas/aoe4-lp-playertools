@@ -1,3 +1,27 @@
+if (!library)
+    var library = {};
+
+library.json = {
+    replacer: function (match, pIndent, pKey, pVal, pEnd) {
+        var key = '<span class=json-key>';
+        var val = '<span class=json-value>';
+        var str = '<span class=json-string>';
+        var r = pIndent || '';
+        if (pKey)
+            r = r + key + pKey.replace(/[": ]/g, '') + '</span>: ';
+        if (pVal)
+            r = r + (pVal[0] == '"' ? str : val) + pVal + '</span>';
+        return r + (pEnd || '');
+    },
+    prettyPrint: function (obj) {
+        var jsonLine = /^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg;
+        return JSON.stringify(obj, null, 2)
+            .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(jsonLine, library.json.replacer);
+    }
+};
+
 // Fetch all players on page load
 fetch('/players')
     .then(res => res.json())
@@ -23,7 +47,7 @@ function updatePlayerUI() {
     });
 }
 
-function updateGameUI() {
+function updateGamesSelectUI() {
     if (!maps) return;  // Check if maps data exists
 
     Object.keys(maps).forEach(mapKey => {
@@ -38,7 +62,6 @@ function updateGameUI() {
     });
 
     let player_id = maps[0].teams[0].players[0].profile_id;
-    console.log(player_id);
     document.getElementById("playerSelect").value = player_id;
 
 }
@@ -50,16 +73,15 @@ function clearScreen() {
     document.getElementById('lpOpponent2').innerHTML = "";
     document.getElementById('lpDateTime').innerHTML = "";
     document.getElementById('mapTextArea').value = "";
-    document.getElementById('mapDetails').value = "";
+    document.getElementById('allDataArea').value = "";
 }
 
 function handleMapClick(selectedMap) {
     currentMap = selectedMap;
 
-    document.getElementById('mapTextArea').value = selectedMap.lp;
-    document.getElementById('mapDetails').value = JSON.stringify(selectedMap, null, 2);
-
-    document.getElementById('lpDateTime').innerHTML = selectedMap.date_lp;
+    document.getElementById('mapTextArea').value = selectedMap.lp.content;
+    document.getElementById('allDataArea').innerHTML = library.json.prettyPrint(selectedMap);
+    document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
     document.getElementById('lpOpponent1').innerHTML = selectedMap.teams[0].players[0].name_lp;
     document.getElementById('lpOpponent2').innerHTML = selectedMap.teams[1].players[0].name_lp;
 }
@@ -81,7 +103,7 @@ function onClickGamesBtn() {
             players = data.players;
             maps = data.maps;
             updatePlayerUI();
-            updateGameUI();
+            updateGamesSelectUI();
         })
         .catch(error => console.error("Error fetching game data:", error));
 }
@@ -94,7 +116,9 @@ function onClickCopyLpDateTime() {
 function onClickCopyToClipboard() {
     const text = document.getElementById('mapTextArea').value;
     navigator.clipboard.writeText(text).then(() => {
-        // Optional: add success feedback
+        const messageDiv = document.getElementById('validCopy');
+        messageDiv.style.display = 'block';
+        setTimeout(() => { messageDiv.style.display = 'none'; }, 2000);
     }).catch(() => {
         // fallback method
         const textarea = document.createElement('textarea');

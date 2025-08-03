@@ -18,12 +18,26 @@ select {
     margin: 10px 0;
 }
 
-#mapDetails {
-    width: 400px;
-    height: 700px;
-    margin: 10px 0;
+#allDataArea {
+    white-space: pre;
 }
 
 button {
     margin: 10px 0;
+}
+
+pre {
+    background-color: ghostwhite;
+    border: 1px solid silver;
+    padding: 10px 20px;
+    margin: 20px; 
+}
+.json-key {
+    color: brown;
+}
+.json-value {
+    color: navy;
+}
+.json-string {
+    color: olive;
 }
