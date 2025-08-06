@@ -78,8 +78,10 @@ function clearScreen() {
     document.getElementById('allDataArea').value = "";
 }
 
-function getIcons(civ) {
-    return `<img src="${staticUrl}icons/${civ}.png" alt="${civ}" style="width: 30px" /> - `;
+function getIcons(civ, winner) {
+    var output = `<img src="${staticUrl}icons/${civ}.png" alt="${civ}" style="width: 30px" /> - `;
+    if (winner.result_type == 1) { output += "👑 " }
+    return output
 }
 
 function onChangeGamesSelect() {
@@ -93,8 +95,8 @@ function onChangeGamesSelect() {
         document.getElementById('mapTextArea').value = selectedMap.lp.content;
         document.getElementById('allDataArea').innerHTML = library.json.prettyPrint(selectedMap);
         document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
-        document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp) + selectedMap.teams[0].players[0].name_lp;
-        document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp) + selectedMap.teams[1].players[0].name_lp;
+        document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp, selectedMap.teams[0]) + selectedMap.teams[0].players[0].name_lp;
+        document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp, selectedMap.teams[1]) + selectedMap.teams[1].players[0].name_lp;
     }
 }
 
