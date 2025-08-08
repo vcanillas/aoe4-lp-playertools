@@ -25,6 +25,7 @@ def search_players(text: str) -> dict[str, Any]:
             "name": player.get("name"),
             "profile_id": player.get("profile_id"),
             "country": player.get("country"),
+            "steam_id": player.get("steam_id"),
         }
         result.append(result_player)
 

@@ -3,7 +3,7 @@ import model
 
 
 @staticmethod
-def get_all_players(matches: List[model.Map], players):
+def get_all_players(matches: List[model.Map], players: dict[int, str]):
     # Make a shallow copy of PLAYERS to avoid modifying the original list
     updated_players = players.copy()
 

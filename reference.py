@@ -23,12 +23,12 @@ CIVILIZATIONS = {
 }
 
 
-def get_Players():
+def get_Players() -> dict[int, str]:
     data = load_data("players.json")
     # Convert keys from string to int
     int_keys_data = {int(k): v for k, v in data.items()}
     return int_keys_data
 
 
-def get_Maps():
+def get_Maps() -> dict[str, str]:
     return load_data("maps.json")

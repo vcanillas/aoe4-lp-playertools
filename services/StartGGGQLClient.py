@@ -17,8 +17,8 @@ query EventStandings($eventId: ID!, $page: Int!, $perPage: Int!) {
     }){
       nodes {
         entrant {
-          name,
           participants {
+          	gamerTag,
           	 user {
               location {
                 country

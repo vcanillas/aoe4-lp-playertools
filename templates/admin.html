@@ -47,6 +47,7 @@
     <form id="participantsListForm" action="/participants" method="GET">
         <label for="eventIdValue">Search:</label>
         <input type="text" id="eventIdValue" name="value" required>
+        <label for="participantFlag">Flag:</label>
         <input type="checkbox" id="participantFlag" name="flag">
         <br>
         <button type="submit">List Participant</button>
@@ -101,7 +102,7 @@
                     const players = JSON.parse(data);
                     let htmlContent = '';
                     players.forEach(player => {
-                        htmlContent += `<p>${player.name} -- ${player.profile_id} -- ${player.country || 'N/A'}</p>`;
+                        htmlContent += `<p>${player.name} -- ${player.profile_id} -- ${player.country || 'N/A'} - <a href="https://steamcommunity.com/profiles/${player.steam_id}" target="_blank">Steam</a></p>`;
                     });
 
                     document.getElementById('searchPlayerResult').innerHTML = htmlContent;
@@ -117,11 +118,11 @@
             fetch(`/participants?id=${value}&with_flag=${withFlag}`, {
                 method: 'GET'
             })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('participantListResult').innerHTML = data;
-            })
-            .catch(error => alert('Error: ' + error));
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('participantListResult').innerHTML = data;
+                })
+                .catch(error => alert('Error: ' + error));
         });
 
     </script>
