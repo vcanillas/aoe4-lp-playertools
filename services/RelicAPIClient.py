@@ -96,7 +96,7 @@ def _process_data(data, player1_id) -> List[model.Map]:
             player.profile_id = profile_id
 
             if profile is not None:
-                player.alias = profile.get("alias", "")
+                player.name_raw = profile.get("alias", "")
                 player.set_lp_name()
                 player.set_civilization_id(member.get("civilization_id"))
 

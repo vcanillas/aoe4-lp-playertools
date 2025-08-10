@@ -12,14 +12,16 @@ class LPItem:
 class Player:
     def __init__(self):
         self.profile_id = None
-        self.alias = None
+        self.name_raw = None
         self.name_lp = None
+        self.name = None
         # self.name = None
         self.civilization_id = None
         self.civilization_lp = None
 
     def set_lp_name(self):
-        self.name_lp = lp.get_player_name_lp(self.profile_id, self.alias)
+        self.name_lp = lp.get_player_name_lp(self.profile_id, self.name_raw, False)
+        self.name = lp.get_player_name_lp(self.profile_id, self.name_raw, True)
 
     def set_civilization_id(self, value):
         self.civilization_id = value
@@ -47,6 +49,7 @@ class Map:
         self.completion_time = None
         self.option_raw = None
         self.map_name_raw = None
+        self.map_alias = None
         self.map_name = None
         self.summary = None
         self.lp: LPItem = LPItem()
@@ -63,9 +66,12 @@ class Map:
         # self.option_raw = value
         option = static.decode_zlib_base64_tojson(value)
         if option is not None:
-            self.map_name = option.get("localizedMapName")
+            self.map_alias = option.get("localizedMapName")
             self.map_name_raw = option.get("mapName")
-            self.lp.map = lp.get_map_lp(self.map_name_raw, self.map_name)
+            self.lp.map = lp.get_map_lp(
+                self.map_name_raw, self.map_alias, unknown=False
+            )
+            self.map_name = lp.get_map_lp(self.map_name_raw, self.map_alias)
 
     def to_dict(self):
         return static._to_dict_recursive(self)
@@ -102,7 +108,7 @@ class Map:
         def set_summary():
             # Check if there are teams
             if not self.teams:
-                self.summary = f"{self.lp.map} - No teams available"
+                self.summary = f"{self.map_name} - No teams available"
                 return
 
             # For simplicity, assume two teams
@@ -113,7 +119,7 @@ class Map:
             def team_info(team: Team):
                 if not team.players:
                     return ("Unknown", "")
-                alias = team.players[0].name_lp
+                alias = team.players[0].name_raw
                 civ = team.players[0].civilization_lp
                 winner = team.result_type == 1
                 return (alias, civ, winner)
@@ -127,7 +133,7 @@ class Map:
                 f"{self.date} "
                 f"{alias1} {'👑 ' if winner1 else ''} ({lp1}) --- "
                 f"{alias2} {'👑 ' if winner2 else ''} ({lp2}) - "
-                f"{self.lp.map}"
+                f"{self.map_name}"
             )
 
         def set_lp():

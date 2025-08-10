@@ -13,6 +13,6 @@ def get_all_players(matches: List[model.Map], players: dict[int, str]):
                 # If player not already in players
                 if player.profile_id not in updated_players:
                     # Create new player object
-                    updated_players[player.profile_id] = player.alias
+                    updated_players[player.profile_id] = player.name_raw
 
     return updated_players

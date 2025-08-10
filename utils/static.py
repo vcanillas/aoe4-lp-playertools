@@ -81,7 +81,7 @@ def decode_zlib_base64_tojson(encoded_data):
 def load_data(filename: str):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(base_dir, "..", "data", filename)
-    with open(data_path, "r") as f:
+    with open(data_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -89,5 +89,5 @@ def load_data(filename: str):
 def save_data(filename: str, data):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(base_dir, "..", "data", filename)
-    with open(data_path, "w") as f:
-        json.dump(data, f, indent=4)
+    with open(data_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)

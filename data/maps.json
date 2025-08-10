@@ -12,6 +12,8 @@
     "excavation": "Excavation",
     "four_lakes": "Four Lakes",
     "egcfrisianmarshesmapname": "Frisian Marshes",
+    "colorado": "Front Range",
+    "golden_heights": "Golden Heights",
     "elitegorge": "Gorge",
     "gorge": "Gorge",
     "hideout": "Hideout",
@@ -24,9 +26,14 @@
     "lipany": "Lipany",
     "rtwlipany": "Lipany",
     "clearing": "Mountain Clearing",
+    "kphighview24": "Pigeon's View",
+    "dunes": "Prairie",
     "regions": "Regions",
     "egcrelicriver": "Relic River",
     "relic_river": "Relic River",
+    "rockies": "Rockies",
     "elitescandinavia": "Scandinavia",
-    "arid_plains": "Sunkenlands"
+    "shadow_lake": "Shadow Lake",
+    "arid_plains": "Sunkenlands",
+    "pit": "The Pit"
 }

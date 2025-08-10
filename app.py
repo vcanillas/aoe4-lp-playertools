@@ -13,13 +13,13 @@ app = Flask(__name__)
 @app.route("/player", methods=["POST"])
 def add_player():
     players = reference.get_Players()
-    new_id = request.json.get("id")
+    new_id = int(request.json.get("id"))
     new_value = request.json.get("value")
     if new_id in players:
         return jsonify({"error": "ID already exists"}), 400
     players[new_id] = new_value
 
-    sorted_maps = dict(sorted(players.items(), key=lambda item: item[1]))
+    sorted_maps = dict(sorted(players.items(), key=lambda item: item[1].lower()))
     static.save_data("players.json", sorted_maps)
     return jsonify({"message": "Player added"}), 201
 
@@ -84,11 +84,6 @@ def game_route():
 
 
 ## Pages
-
-
-@app.route("/admin")
-def home():
-    return render_template("admin.html")
 
 
 @app.route("/")

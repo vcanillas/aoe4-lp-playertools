@@ -15,38 +15,87 @@
 </head>
 
 <body>
-    <a href="./admin">Go to Admin Page</a> <br />
-    <!-- Player dropdown (for 'Get Details') -->
-    <label for="playerSelect">Select Player:</label>
-    <select id="playerSelect"></select>
-    <input type="text" id="playerTextBox" name="playerTextBox" title="Id of the player">
+    <!-- <a href="./admin">Go to Admin Page</a> <br /> -->
+    <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
+        <button class="tab-btn" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
+    </div>
+    <div class="tab-content active" id="tab1">
 
-    <!-- 1. Games Button and Dropdown -->
-    <button onclick="onClickGamesBtn()">Games</button>
-    <br />
+        <!-- Player dropdown (for 'Get Details') -->
+        <label for="playerSelect">Select Player:</label>
+        <select id="playerSelect"></select>
+        <input type="text" id="playerTextBox" name="playerTextBox" title="Id of the player">
 
-    <select id="gamesSelect" name="gamesSelect" title="gamesSelect" size="10">
-    </select>
-    <br />
+        <!-- 1. Games Button and Dropdown -->
+        <button onclick="onClickGamesBtn()">Games</button>
+        <br />
 
-    <hr />
+        <select id="gamesSelect" name="gamesSelect" title="gamesSelect" size="10">
+        </select>
+        <br />
 
-    <!-- Liquipedia textarea to fill -->
-    <textarea id="mapTextArea"></textarea>
-    
-    <button onclick="onClickCopyToClipboard()">Copy<span id="validCopy" style="display:none;">✅</span></button>
-    <button onclick="onClickReverseLP()">Reverse</button>
-    
-    <br />
-    <span id="lpDateTime"></span> <button onclick="onClickCopyLpDateTime()">Copy DateTime</button>
-    <br />
-    <span id="lpOpponent1"></span> <br />
-    <span id="lpOpponent2"></span> <button onclick="onClickViewGames()">View Games</button>
-    <br />
+        <hr />
 
-    <!-- Map details display -->
-    <pre><code id="allDataArea"></code></pre>
+        <!-- Liquipedia textarea to fill -->
+        <textarea id="mapTextArea"></textarea>
 
+        <button onclick="onClickCopyToClipboard()">Copy<span id="validCopy" style="display:none;">✅</span></button>
+        <button onclick="onClickReverseLP()">Reverse</button>
+
+        <br />
+        <span id="lpDateTime"></span> <button onclick="onClickCopyLpDateTime()">Copy DateTime</button>
+        <br />
+        <span id="lpOpponent1"></span> <br />
+        <span id="lpOpponent2"></span> <button onclick="onClickViewGames()">View Games</button>
+        <br />
+
+        <!-- Map details display -->
+        <pre><code id="allDataArea"></code></pre>
+    </div>
+    <div class="tab-content" id="tab2">
+        <h2>Add Maps</h2>
+        <form id="mapsForm" onsubmit="onSubmitMapsForm(event)">
+            <label for="mapKey">Key:</label>
+            <input type="text" id="mapKey" name="id" required>
+            <br>
+            <label for="mapValue">Value:</label>
+            <input type="text" id="mapValue" name="value" required>
+            <br>
+            <button type="submit">Add Map</button>
+        </form>
+
+        <h2>Add Players</h2>
+        <form id="playersForm" onsubmit="onSubmitPlayersForm(event)">
+            <label for="playerKey">Key:</label>
+            <input type="text" id="playerKey" name="id" required>
+            <br>
+            <label for="playerValue">Value:</label>
+            <input type="text" id="playerValue" name="value" required>
+            <br>
+            <button type="submit">Add Player</button>
+        </form>
+
+        <h2>Search Players</h2>
+        <form id="searchPlayersForm" onsubmit="onSubmitSearchPlayersForm(event)">
+            <label for="searchPlayerValue">Search:</label>
+            <input type="text" id="searchPlayerValue" name="value" required>
+            <br>
+            <button type="submit">Search Player</button>
+            <div id="searchPlayerResult"></div>
+        </form>
+
+        <h2>Participant Start.gg</h2>
+        <form id="participantsListForm" onsubmit="onSubmitParticipantsListForm(event)">
+            <label for="eventIdValue">Search:</label>
+            <input type="text" id="eventIdValue" name="value" required>
+            <label for="participantFlag">Flag:</label>
+            <input type="checkbox" id="participantFlag" name="flag">
+            <br>
+            <button type="submit">List Participant</button>
+            <div id="participantListResult"></div>
+        </form>
+    </div>
 </body>
 
 </html>

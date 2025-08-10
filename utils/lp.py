@@ -10,17 +10,19 @@ def get_civilization_lp(id) -> str:
 
 
 @staticmethod
-def get_map_lp(id, label) -> str:
+def get_map_lp(id, label, unknown=True) -> str:
     try:
-        return get_Maps().get(id, f"### Unknown - {id} - {label}")
+        return get_Maps().get(id, f"{label} - ### Unknown - {id}" if unknown else label)
     except KeyError:
         return f"Unknow_Key ### - {id} - {label}"
 
 
 @staticmethod
-def get_player_name_lp(id, label) -> str:
+def get_player_name_lp(id, label, unknown=True) -> str:
     try:
-        return get_Players().get(id, f"{label} - ### Unknown - {id}")
+        return get_Players().get(
+            id, f"{label} - ### Unknown - {id}" if unknown else label
+        )
     except KeyError:
         return f"Unknow_Key ### - {id} - {label} - "
 

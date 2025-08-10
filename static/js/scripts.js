@@ -75,7 +75,7 @@ function clearScreen() {
     document.getElementById('lpOpponent2').innerHTML = "";
     document.getElementById('lpDateTime').innerHTML = "";
     document.getElementById('mapTextArea').value = "";
-    document.getElementById('allDataArea').value = "";
+    document.getElementById('allDataArea').innerHTML = "";
 }
 
 function getIcons(civ, winner) {
@@ -95,8 +95,8 @@ function onChangeGamesSelect() {
         document.getElementById('mapTextArea').value = selectedMap.lp.content;
         document.getElementById('allDataArea').innerHTML = library.json.prettyPrint(selectedMap);
         document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
-        document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp, selectedMap.teams[0]) + selectedMap.teams[0].players[0].name_lp;
-        document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp, selectedMap.teams[1]) + selectedMap.teams[1].players[0].name_lp;
+        document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp, selectedMap.teams[0]) + selectedMap.teams[0].players[0].name;
+        document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp, selectedMap.teams[1]) + selectedMap.teams[1].players[0].name;
     }
 }
 
@@ -117,6 +117,9 @@ function onClickGamesBtn() {
 
             players = data.players;
             maps = data.maps;
+
+            if (maps.length == 0) { alert("No Games"); return; }
+
             updatePlayerUI();
             updateGamesSelectUI();
         })
@@ -202,4 +205,112 @@ ${'players2' in keyValues ? `        |players2=${keyValues['players2']}\n` : ''}
 function onClickViewGames() {
     document.getElementById("playerTextBox").value = currentMap.teams[1].players[0].profile_id;
     onClickGamesBtn();
+}
+
+function onClickTabs(button) {
+    // Select all tab buttons and contents
+    const buttons = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    // Remove 'active' class from all buttons
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // Add 'active' class to the clicked button
+    button.classList.add('active');
+
+    // Get the target tab ID from data attribute
+    const tabId = button.getAttribute('data-tab');
+
+    // Remove 'active' class from all tab contents
+    contents.forEach(content => content.classList.remove('active'));
+
+    // Add 'active' class to the selected tab content
+    const targetContent = document.getElementById(tabId);
+    if (targetContent) {
+        targetContent.classList.add('active');
+    }
+}
+
+// Events Admin
+
+function onSubmitMapsForm(e) {
+    e.preventDefault();
+    const key = document.getElementById('mapKey').value;
+    const value = document.getElementById('mapValue').value;
+    fetch('/map', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: key, value: value })
+    })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(error => alert('Error: ' + error));
+}
+
+function onSubmitPlayersForm(e) {
+    e.preventDefault();
+    const key = document.getElementById('playerKey').value;
+    const value = document.getElementById('playerValue').value;
+    fetch('/player', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: JSON.stringify({ id: key, value: value })
+    })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(error => alert('Error: ' + error));
+}
+
+function onSubmitSearchPlayersForm(e) {
+    e.preventDefault();
+    const value = document.getElementById('searchPlayerValue').value;
+    fetch('/search_player', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: value })
+    })
+        .then(response => response.text())
+        .then(data => {
+            const players = JSON.parse(data);
+            let htmlContent = '';
+            players.forEach(player => {
+                htmlContent += `<p>${player.name} 
+                -- <a href="#" onclick="onClickSelectPlayer('${player.profile_id}'); return false;">${player.profile_id}</a>
+                -- ${player.country || 'N/A'} 
+                - <a href="https://steamcommunity.com/profiles/${player.steam_id}" target="_blank">Steam</a></p>`;
+            });
+
+            document.getElementById('searchPlayerResult').innerHTML = htmlContent;
+        })
+        .catch(error => alert('Error: ' + error));
+}
+
+function onSubmitParticipantsListForm(e) {
+    e.preventDefault();
+    const value = document.getElementById('eventIdValue').value;
+    const withFlag = document.getElementById('participantFlag').checked ? 1 : 0;
+
+    fetch(`/participants?id=${value}&with_flag=${withFlag}`, {
+        method: 'GET'
+    })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('participantListResult').innerHTML = data;
+        })
+        .catch(error => alert('Error: ' + error));
+}
+
+function onClickSelectPlayer(profileId) {
+    document.getElementById('playerTextBox').value = profileId; // or profileId if needed
+
+    const tab1Button = document.querySelector('.tab-btn[data-tab="tab1"]');
+    if (tab1Button) { tab1Button.click(); }
+
+    return onClickGamesBtn();
 }
