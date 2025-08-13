@@ -1,97 +1,114 @@
+:root {
+	--bg-color: #ffffff;
+	--text-color: #363636;
+}
+
+body.dark-theme {
+	--bg-color: #3a3838;
+	--text-color: #f5f5f5;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	transition: background-color 0.3s, color 0.3s;
+	padding: 20px;
+}
+
+#themeButton {
+	float: right;
+}
+
+/* Style for the toggle button */
+.theme-toggle {
+	background-color: var(--button-bg);
+	color: var(--button-text);
+	border: none;
+	padding: 0.75em 1.5em;
+	cursor: pointer;
+	margin: 1em;
+}
+
+/* Optional: Hover effect for button */
+.theme-toggle:hover {
+	opacity: 0.8;
+}
+
+h2 {
+	font-size: 2rem;
+	/* Increase size */
+	font-weight: 700;
+	/* Make it bold, optional */
 }
 
 select {
-  width: 300px;
-  margin: 10px 0;
+	width: 300px;
+	margin: 10px 0;
 }
 
 #gamesSelect {
-  width: 900px;
+	width: 900px;
 }
 
 #mapTextArea {
-  width: 300px;
-  height: 100px;
-  margin: 10px 0;
+	width: 300px;
+	height: 100px;
+	margin: 10px 0;
 }
 
 #allDataArea {
-  white-space: pre;
+	white-space: pre;
 }
 
-#lpOpponent1{
-  font-weight: bold;
-}
-
-button {
-  margin: 10px 0;
+#lpOpponent1 {
+	font-weight: bold;
 }
 
 /* Basic styling for json */
 pre {
-  background-color: ghostwhite;
-  border: 1px solid silver;
-  padding: 10px 20px;
-  margin: 20px; 
+	background-color: ghostwhite;
+	border: 1px solid silver;
+	padding: 10px 20px;
+	margin: 20px;
 }
+
 .json-key {
-  color: #0451A5;
+	color: #0451A5;
 }
+
 .json-value {
-  color: #098658;
+	color: #098658;
 }
+
 .json-string {
-  color: #A31515;
+	color: #A31515;
 }
 
 /* Basic styling for tabs */
 .tab-buttons {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+	overflow: hidden;
+	border: 1px solid #ccc;
 }
 
 /* Style the buttons inside the tab */
 .tab-buttons button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  margin: 0 0;
-  font-size: 17px;
-}
-
-/* Change background color of buttons on hover */
-.tab-buttons button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab-buttons button.active {
-  background-color: #ccc;
+	border-radius: 0;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+	margin: 0 0;
+	font-size: 17px;
 }
 
 /* Style the tab content */
 .tab-content {
-  display: none;
-  padding: 6px 12px;
+	display: none;
+	padding: 6px 12px;
 }
 
 .active {
-  display: block;
+	display: block;
 }
-
-/* Style the close button */
-.topright {
-  float: right;
-  cursor: pointer;
-  font-size: 28px;
-}
-
-.topright:hover {color: red;}

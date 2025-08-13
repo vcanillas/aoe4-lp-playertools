@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Player Tools</title>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
@@ -17,8 +18,9 @@
 <body>
     <!-- <a href="./admin">Go to Admin Page</a> <br /> -->
     <div class="tab-buttons">
-        <button class="tab-btn active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
-        <button class="tab-btn" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
+        <button class="tab-btn button is-active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
+        <button class="tab-btn button" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
+        <button id="themeButton" class="button is-text" onclick="onClickThemeToggle()">Switch theme</button>
     </div>
     <div class="tab-content active" id="tab1">
 
@@ -28,26 +30,26 @@
         <input type="text" id="playerTextBox" name="playerTextBox" title="Id of the player">
 
         <!-- 1. Games Button and Dropdown -->
-        <button onclick="onClickGamesBtn()">Games</button>
+        <button class="button" onclick="onClickGamesBtn()">Games</button>
         <br />
 
         <select id="gamesSelect" name="gamesSelect" title="gamesSelect" size="10">
         </select>
-        <br />
 
-        <hr />
+        <br />
 
         <!-- Liquipedia textarea to fill -->
         <textarea id="mapTextArea"></textarea>
 
-        <button onclick="onClickCopyToClipboard()">Copy<span id="validCopy" style="display:none;">✅</span></button>
-        <button onclick="onClickReverseLP()">Reverse</button>
+        <button class="button" onclick="onClickCopyToClipboard()">Copy<span id="validCopy"
+                style="display:none;">✅</span></button>
+        <button class="button" onclick="onClickReverseLP()">Reverse</button>
 
         <br />
-        <span id="lpDateTime"></span> <button onclick="onClickCopyLpDateTime()">Copy DateTime</button>
+        <span id="lpDateTime"></span> <button class="button" onclick="onClickCopyLpDateTime()">Copy DateTime</button>
         <br />
         <span id="lpOpponent1"></span> <br />
-        <span id="lpOpponent2"></span> <button onclick="onClickViewGames()">View Games</button>
+        <span id="lpOpponent2"></span> <button class="button" onclick="onClickViewGames()">View Games</button>
         <br />
 
         <!-- Map details display -->
@@ -62,9 +64,9 @@
             <label for="mapValue">Value:</label>
             <input type="text" id="mapValue" name="value" required>
             <br>
-            <button type="submit">Add Map</button>
+            <button class="button" type="submit">Add Map</button>
         </form>
-
+        <hr />
         <h2>Add Players</h2>
         <form id="playersForm" onsubmit="onSubmitPlayersForm(event)">
             <label for="playerKey">Key:</label>
@@ -73,18 +75,18 @@
             <label for="playerValue">Value:</label>
             <input type="text" id="playerValue" name="value" required>
             <br>
-            <button type="submit">Add Player</button>
+            <button class="button" type="submit">Add Player</button>
         </form>
-
+        <hr />
         <h2>Search Players</h2>
         <form id="searchPlayersForm" onsubmit="onSubmitSearchPlayersForm(event)">
             <label for="searchPlayerValue">Search:</label>
             <input type="text" id="searchPlayerValue" name="value" required>
             <br>
-            <button type="submit">Search Player</button>
+            <button class="button" type="submit">Search Player</button>
             <div id="searchPlayerResult"></div>
         </form>
-
+        <hr />
         <h2>Participant Start.gg</h2>
         <form id="participantsListForm" onsubmit="onSubmitParticipantsListForm(event)">
             <label for="eventIdValue">Search:</label>
@@ -92,7 +94,7 @@
             <label for="participantFlag">Flag:</label>
             <input type="checkbox" id="participantFlag" name="flag">
             <br>
-            <button type="submit">List Participant</button>
+            <button class="button" type="submit">List Participant</button>
             <div id="participantListResult"></div>
         </form>
     </div>

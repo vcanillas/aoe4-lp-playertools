@@ -31,6 +31,10 @@ fetch('/players')
         updatePlayerUI();
     });
 
+function onClickThemeToggle() {
+    document.body.classList.toggle('dark-theme');
+}
+
 function updatePlayerUI() {
 
     const sortedPlayers = Object.entries(players)
@@ -213,18 +217,18 @@ function onClickTabs(button) {
     const contents = document.querySelectorAll('.tab-content');
 
     // Remove 'active' class from all buttons
-    buttons.forEach(btn => btn.classList.remove('active'));
+    buttons.forEach(btn => btn.classList.remove('is-active'));
 
-    // Add 'active' class to the clicked button
-    button.classList.add('active');
+    // Add 'is-active' class to the clicked button
+    button.classList.add('is-active');
 
     // Get the target tab ID from data attribute
     const tabId = button.getAttribute('data-tab');
 
-    // Remove 'active' class from all tab contents
+    // Remove 'is-active' class from all tab contents
     contents.forEach(content => content.classList.remove('active'));
 
-    // Add 'active' class to the selected tab content
+    // Add 'is-active' class to the selected tab content
     const targetContent = document.getElementById(tabId);
     if (targetContent) {
         targetContent.classList.add('active');
