@@ -47,6 +47,7 @@ class Map:
         self.start_game_time = None
         self.date = None
         self.completion_time = None
+        self.duration = None
         self.option_raw = None
         self.map_name_raw = None
         self.map_alias = None
@@ -179,10 +180,14 @@ class Map:
 
             self.lp.content = output
 
+        def set_duration():
+            self.duration = static.difference_timestamp(self.start_game_time, self.completion_time)
+
         if len(self.teams) > 1:
             reorder(player1_id)
             set_summary()
             set_lp()
+            set_duration()
             return True
         else:
             return False

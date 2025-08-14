@@ -1,4 +1,5 @@
 import json, os
+from datetime import datetime
 
 
 @staticmethod
@@ -51,6 +52,20 @@ def format_timestamp(
         return f"{date_str} {{{{Abbr/{abbr}}}}}"
     else:
         return date_str
+
+@staticmethod
+def difference_timestamp(start_time: int, completion_time: int):
+    dt1 = datetime.fromtimestamp(start_time)
+    dt2 = datetime.fromtimestamp(completion_time)
+
+    diff = abs(dt2 - dt1)
+
+    # Extract hours and minutes
+    total_minutes = diff.total_seconds() // 60
+    hours = int(total_minutes // 60)
+    minutes = int(total_minutes % 60)
+
+    return f"{hours:02d}:{minutes:02d}"
 
 
 @staticmethod
