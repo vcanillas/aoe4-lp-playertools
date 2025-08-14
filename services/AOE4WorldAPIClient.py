@@ -2,6 +2,8 @@ from typing import Any
 
 import requests
 
+import reference
+
 AOE4WORLD_URL_API = "https://aoe4world.com/api"
 
 
@@ -19,6 +21,8 @@ def search_players(text: str) -> dict[str, Any]:
     else:
         raise ("Error:", response.status_code, response.text)
 
+    lp_players = reference.get_Players()
+
     result = []
     for player in api_result["players"]:
         result_player = {
@@ -26,6 +30,7 @@ def search_players(text: str) -> dict[str, Any]:
             "profile_id": player.get("profile_id"),
             "country": player.get("country"),
             "steam_id": player.get("steam_id"),
+            "lp_name" : lp_players.get(player.get("profile_id"), '')
         }
         result.append(result_player)
 

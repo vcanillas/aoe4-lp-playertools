@@ -35,6 +35,10 @@ refreshDrafts();
 
 function onClickThemeToggle() {
     document.body.classList.toggle('dark-theme');
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
 }
 
 function updatePlayerUI() {
@@ -107,7 +111,9 @@ function onChangeGamesSelect() {
 }
 
 
-function onClickGamesBtn() {
+function onClickGamesBtn(button) {
+
+    addIsInfo(button);
 
     fetch('/games', {
         method: 'POST',
@@ -125,11 +131,11 @@ function onClickGamesBtn() {
             maps = data.maps;
 
             if (maps.length == 0) { alert("No Games"); return; }
-
             updatePlayerUI();
             updateGamesSelectUI();
         })
-        .catch(error => console.error("Error fetching game data:", error));
+        .catch(error => console.error("Error fetching game data:", error))
+        .finally(() => removeIsInfo(button));
 }
 
 function onClickCopyLpDateTime() {
@@ -237,6 +243,14 @@ function onClickTabs(button) {
     }
 }
 
+function addIsInfo(button) {
+    button.classList.add('is-info');
+}
+
+function removeIsInfo(button) {
+    button.classList.remove('is-info');
+}
+
 // Events Admin
 
 function onSubmitMapsForm(e) {
@@ -273,6 +287,9 @@ function onSubmitPlayersForm(e) {
 
 function onSubmitSearchPlayersForm(e) {
     e.preventDefault();
+    const button = e.target.querySelector('button');
+    addIsInfo(button);
+
     const value = document.getElementById('searchPlayerValue').value;
     fetch('/search_player', {
         method: 'POST',
@@ -289,16 +306,22 @@ function onSubmitSearchPlayersForm(e) {
                 htmlContent += `<p>${player.name} 
                 -- <a href="#" onclick="onClickSelectPlayer('${player.profile_id}'); return false;">${player.profile_id}</a>
                 -- ${player.country || 'N/A'} 
-                - <a href="https://steamcommunity.com/profiles/${player.steam_id}" target="_blank">Steam</a></p>`;
+                - <a href="https://steamcommunity.com/profiles/${player.steam_id}" target="_blank">Steam</a>
+                - ${player.lp_name || ''} 
+                </p>`;
             });
 
             document.getElementById('searchPlayerResult').innerHTML = htmlContent;
         })
-        .catch(error => alert('Error: ' + error));
+        .catch(error => alert('Error: ' + error))
+        .finally(() => removeIsInfo(button));
 }
 
 function onSubmitParticipantsListForm(e) {
     e.preventDefault();
+    const button = e.target.querySelector('button');
+    addIsInfo(button);
+
     const value = document.getElementById('eventIdValue').value;
     const withFlag = document.getElementById('participantFlag').checked ? 1 : 0;
 
@@ -309,7 +332,8 @@ function onSubmitParticipantsListForm(e) {
         .then(data => {
             document.getElementById('participantListResult').innerHTML = data;
         })
-        .catch(error => alert('Error: ' + error));
+        .catch(error => alert('Error: ' + error))
+        .finally(() => removeIsInfo(button));
 }
 
 function onClickSelectPlayer(profileId) {

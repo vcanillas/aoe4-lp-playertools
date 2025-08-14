@@ -14,7 +14,7 @@ app = Flask(__name__)
 def add_player():
     players = reference.get_Players()
     new_id = int(request.json.get("id"))
-    new_value = request.json.get("value")
+    new_value = request.json.get("value").strip()
     if new_id in players:
         return jsonify({"error": "ID already exists"}), 400
     players[new_id] = new_value
@@ -34,7 +34,7 @@ def search_player():
 @app.route("/map", methods=["POST"])
 def add_map():
     new_id = request.json.get("id")
-    new_value = request.json.get("value")
+    new_value = request.json.get("value").strip()
     maps = reference.get_Maps()
 
     if new_id in maps:

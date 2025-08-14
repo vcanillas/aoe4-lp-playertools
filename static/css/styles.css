@@ -1,11 +1,16 @@
 :root {
 	--bg-color: #ffffff;
 	--text-color: #000000;
+	--bulma-info-h: 197deg;
+	--bulma-info-s: 99%;
+	--bulma-info-l: 71%;
 }
 
-html, body { height: 100%; }
+/* html, body { height: 100%; } */
 
 body {
+	overflow: auto;
+	height: 100vh;
 	background-color: var(--bg-color);
 	color: var(--text-color);
 	transition: background-color 0.3s, color 0.3s;
@@ -20,9 +25,7 @@ body.dark-theme {
 }
 
 .button {
-	margin-top: 3px;
-	background-color: var(--bg-button-color);
-	color: var(--text-button-color);
+	margin: 3px;
 }
 
 h2 {
@@ -61,22 +64,27 @@ h2 {
 
 /* Basic styling for json */
 pre {
-	background-color: ghostwhite;
+	background-color: rgb(31, 34, 41);
 	border: 1px solid silver;
 	padding: 10px 20px;
-	margin: 20px;
+	margin: 5px;
+	
+}
+
+#jsonArea{
+	color: white;
 }
 
 .json-key {
-	color: #0451A5;
+	color: #9CDCFE;
 }
 
 .json-value {
-	color: #098658;
+	color: #B5CEA8;
 }
 
 .json-string {
-	color: #A31515;
+	color: #CE9178;
 }
 
 /* Basic styling for tabs */

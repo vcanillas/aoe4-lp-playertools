@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="utf-8" />
@@ -8,14 +8,15 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-
-    <script>
-        const staticUrl = "{{ url_for('static', filename='') }}";
-    </script>
+    
 </head>
 
 <body>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+        const staticUrl = "{{ url_for('static', filename='') }}";
+    </script>
+
     <!-- <a href="./admin">Go to Admin Page</a> <br /> -->
     <div class="tab-buttons">
         <button class="tab-btn button is-text is-active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
@@ -31,10 +32,10 @@
         <input type="text" id="playerTextBox" name="playerTextBox" title="Id of the player">
 
         <!-- 1. Games Button and Dropdown -->
-        <button class="button" onclick="onClickGamesBtn()">Games</button>
+        <button class="button" onclick="onClickGamesBtn(this)">Games</button>
         <br />
 
-        <select id="gamesSelect" name="gamesSelect" title="gamesSelect" size="10">
+        <select id="gamesSelect" name="gamesSelect" size="10">
         </select>
 
         <br />
