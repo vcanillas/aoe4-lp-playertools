@@ -18,8 +18,9 @@
 <body>
     <!-- <a href="./admin">Go to Admin Page</a> <br /> -->
     <div class="tab-buttons">
-        <button class="tab-btn button is-active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
-        <button class="tab-btn button" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
+        <button class="tab-btn button is-text is-active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
+        <button class="tab-btn button is-text" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
+        <button class="tab-btn button is-text" data-tab="tab3" onclick="onClickTabs(this)">Draft</button>
         <button id="themeButton" class="button is-text" onclick="onClickThemeToggle()">Switch theme</button>
     </div>
     <div class="tab-content active" id="tab1">
@@ -53,7 +54,7 @@
         <br />
 
         <!-- Map details display -->
-        <pre><code id="allDataArea"></code></pre>
+        <pre><code id="jsonArea"></code></pre>
     </div>
     <div class="tab-content" id="tab2">
         <h2>Add Maps</h2>
@@ -96,6 +97,29 @@
             <br>
             <button class="button" type="submit">List Participant</button>
             <div id="participantListResult"></div>
+        </form>
+    </div>
+    <div class="tab-content" id="tab3">
+        <h2>Add Drafts</h2>
+        <form id="AddDraftForm" onsubmit="onSubmitAddDraftForm(event)">
+            <label for="draftKey">Key:</label>
+            <input type="text" id="draftKey" name="id" required>
+            <br>
+            <label for="draftValue">Value:</label>
+            <input type="text" id="draftValue" name="value" required>
+            <br>
+            <button class="button" type="submit">Add Draft</button>
+        </form>
+        <hr />
+        <h2>List Drafts</h2>
+        <form id="draftForm" onsubmit="onSubmitDraftForm(event)">
+            <!-- Player dropdown (for 'Get Details') -->
+            <label for="draftSelect">Select Draft:</label>
+            <select id="draftSelect"></select>
+
+            <!-- 1. Games Button and Dropdown -->
+            <button class="button">Draft</button>
+            <div id="draftListResult"></div>
         </form>
     </div>
 </body>

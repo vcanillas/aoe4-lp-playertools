@@ -57,6 +57,26 @@ def get_participant():
     return result
 
 
+## Draft Part
+
+
+@app.route("/draft", methods=["POST"])
+def add_draft():
+    drafts = reference.get_Draft()
+    new_key = request.json.get("id")
+    print(new_key)
+    new_value = request.json.get("value")
+    drafts[new_key] = new_value
+
+    static.save_data("draft.json", drafts)
+    return jsonify({"message": "Draft added"}), 201
+
+
+@app.route("/drafts", methods=["GET"])
+def get_drafts():
+    return reference.get_Draft()
+
+
 ## Home Part
 
 

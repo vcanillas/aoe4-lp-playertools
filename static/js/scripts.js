@@ -31,6 +31,8 @@ fetch('/players')
         updatePlayerUI();
     });
 
+refreshDrafts();
+
 function onClickThemeToggle() {
     document.body.classList.toggle('dark-theme');
 }
@@ -79,7 +81,7 @@ function clearScreen() {
     document.getElementById('lpOpponent2').innerHTML = "";
     document.getElementById('lpDateTime').innerHTML = "";
     document.getElementById('mapTextArea').value = "";
-    document.getElementById('allDataArea').innerHTML = "";
+    document.getElementById('jsonArea').innerHTML = "";
 }
 
 function getIcons(civ, winner) {
@@ -97,7 +99,7 @@ function onChangeGamesSelect() {
         currentMap = selectedMap; // Store for onClickViewGames()
 
         document.getElementById('mapTextArea').value = selectedMap.lp.content;
-        document.getElementById('allDataArea').innerHTML = library.json.prettyPrint(selectedMap);
+        document.getElementById('jsonArea').innerHTML = library.json.prettyPrint(selectedMap);
         document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
         document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp, selectedMap.teams[0]) + selectedMap.teams[0].players[0].name;
         document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp, selectedMap.teams[1]) + selectedMap.teams[1].players[0].name;
@@ -317,4 +319,56 @@ function onClickSelectPlayer(profileId) {
     if (tab1Button) { tab1Button.click(); }
 
     return onClickGamesBtn();
+}
+
+// Events Drafts
+
+function refreshDrafts() {
+    fetch('/drafts')
+        .then(res => res.json())
+        .then(data => {
+            drafts = data;
+            updateDraftUI();
+        });
+}
+
+function updateDraftUI() {
+    const draftSelect = document.getElementById("draftSelect");
+    draftSelect.innerHTML = ""; // Clear existing options
+
+    Object.entries(drafts).forEach(([draftId, draftPreset]) => {
+        const option = document.createElement('option');
+        option.value = draftPreset;
+        option.text = draftId;
+        draftSelect.appendChild(option);
+    });
+}
+
+function onSubmitDraftForm(e) {
+    e.preventDefault();
+    const selectElement = document.getElementById('draftSelect');
+    const preset = selectElement.value;
+    const key = selectElement.options[selectElement.selectedIndex].text;
+
+    document.getElementById('draftListResult').innerHTML = `
+    ${key} - <br />
+    <a href="https://aoe4world.com/api/v0/esports/drafts?preset=${preset}" target="_blank">https://aoe4world.com/api/v0/esports/drafts?preset=${preset}</a></p>
+    `;
+}
+
+function onSubmitAddDraftForm(e) {
+    e.preventDefault();
+    const key = document.getElementById('draftKey').value;
+    const value = document.getElementById('draftValue').value;
+    fetch('/draft', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: key, value: value })
+    })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .then(() => refreshDrafts())
+        .catch(error => alert('Error: ' + error));
 }

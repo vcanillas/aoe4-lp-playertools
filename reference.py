@@ -32,3 +32,7 @@ def get_Players() -> dict[int, str]:
 
 def get_Maps() -> dict[str, str]:
     return load_data("maps.json")
+
+
+def get_Draft() -> dict[str, str]:
+    return load_data("draft.json")
