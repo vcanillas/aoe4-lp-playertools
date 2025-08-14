@@ -216,7 +216,7 @@ ${'players2' in keyValues ? `        |players2=${keyValues['players2']}\n` : ''}
 
 function onClickViewGames() {
     document.getElementById("playerTextBox").value = currentMap.teams[1].players[0].profile_id;
-    onClickGamesBtn();
+    onClickGamesBtn(document.getElementById('gamesBtn'));
 }
 
 function onClickTabs(button) {
@@ -342,7 +342,7 @@ function onClickSelectPlayer(profileId) {
     const tab1Button = document.querySelector('.tab-btn[data-tab="tab1"]');
     if (tab1Button) { tab1Button.click(); }
 
-    return onClickGamesBtn();
+    return onClickGamesBtn(document.getElementById('gamesBtn'));
 }
 
 // Events Drafts
