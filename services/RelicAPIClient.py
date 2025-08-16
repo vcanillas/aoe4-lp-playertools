@@ -7,7 +7,7 @@ import model, settings
 RELIC_URL_API = "https://aoe-api.worldsedgelink.com"
 
 
-def get_recent_match(player_id: int) -> List[model.Map]:
+def get_recent_match(players_ids: List[int]) -> List[model.Map]:
 
     def mock():
         # Mock response data, typically loaded from a.json
@@ -16,12 +16,12 @@ def get_recent_match(player_id: int) -> List[model.Map]:
 
     # Your API URL with parameters
     url = RELIC_URL_API + "/community/leaderboard/getRecentMatchHistory"
-    params = {"title": "age4", "profile_ids": json.dumps([player_id])}
+    params = {"title": "age4", "profile_ids": json.dumps(players_ids)}
 
     # Call & save result (for cache)
     if settings.USE_MOCK:
         api_result = mock()
-        player_id = 11628131
+        players_ids = 11628131
     else:
         # Make the GET request
         response = requests.get(url, params=params)
@@ -32,10 +32,10 @@ def get_recent_match(player_id: int) -> List[model.Map]:
         else:
             raise ("Error:", response.status_code, response.text)
 
-    maps = _process_data(api_result, player_id)
+    maps = _process_data(api_result, players_ids)
 
     if settings.DEBUG:
-        with open(f"./flux/flux-{player_id}.json", "w") as json_file:
+        with open(f"./flux/flux-{players_ids}.json", "w") as json_file:
             json.dump(api_result, json_file, indent=2)
 
         map_dicts = [item.to_dict() for item in maps]

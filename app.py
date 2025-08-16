@@ -82,7 +82,11 @@ def get_drafts():
 
 @app.route("/players", methods=["GET"])
 def get_players():
-    return reference.get_Players()
+    unique_players = {}
+    for key, value in reference.get_Players().items():
+        if value not in unique_players.values():
+            unique_players[key] = value
+    return unique_players
 
 
 @app.route("/games", methods=["POST"])
@@ -91,14 +95,22 @@ def game_route():
     data = request.get_json()
     player_id = int(data.get("player_id"))
 
-    player2 = data.get("player_id2")
-    if player2 is not None and player2 != "":
-        player_id = int(player2)
+    player_id2 = data.get("player_id2")
+    if player_id2 is not None and player_id2 != "":
+        players_ids = [int(player_id2)]
+    else:
+        players = reference.get_Players()
 
-    maps = RelicAPIClient.get_recent_match(player_id=player_id)
+        player_reference = players.get(player_id)
+        if player_reference:
+            players_ids = [key for key, value in players.items() if value == player_reference]
+        else:
+            players_ids = [player_id]
+
+    maps = RelicAPIClient.get_recent_match(players_ids=players_ids)
 
     map_dicts = [item.to_dict() for item in maps]
-    all_players = get_all_players(maps, reference.get_Players())
+    all_players = get_all_players(maps, get_players())
 
     return jsonify({"players": all_players, "maps": map_dicts})
 

@@ -1,6 +1,6 @@
 from typing import List
 from utils import static, lp
-
+import settings
 
 class LPItem:
     def __init__(self):
@@ -64,8 +64,8 @@ class Map:
         )
 
     def set_option_raw(self, value):
-        # self.option_raw = value
         option = static.decode_zlib_base64_tojson(value)
+
         if option is not None:
             self.map_alias = option.get("localizedMapName")
             self.map_name_raw = option.get("mapName")
@@ -73,33 +73,36 @@ class Map:
                 self.map_name_raw, self.map_alias, unknown=False
             )
             self.map_name = lp.get_map_lp(self.map_name_raw, self.map_alias)
+            
+            if settings.DEBUG:
+                self.option_raw = option
 
     def to_dict(self):
         return static._to_dict_recursive(self)
 
-    def complete_data(self, player1_id: int):
+    def complete_data(self, player1_id: List[int]):
 
-        def reorder(player1_id: int):
+        def reorder(player1_ids: List[int]):
             # Find the team and index where the player is located
             team_index = None
             for idx, team in enumerate(self.teams):
                 for p in team.players:
-                    if p.profile_id == player1_id:
+                    if p.profile_id in player1_ids:
                         team_index = idx
                         break
                 if team_index is not None:
                     break
 
             if team_index is None:
-                print(f"Player with ID {player1_id} not found.")
+                print(f"Player with ID {player1_ids} not found.")
                 return
 
             # Move the player to the top of their current team
             team = self.teams[team_index]
             # Remove the player from their original position
-            player = next(p for p in team.players if p.profile_id == player1_id)
+            player = next(p for p in team.players if p.profile_id in player1_ids)
             # Remove the player from the list
-            team.players = [p for p in team.players if p.profile_id != player1_id]
+            team.players = [p for p in team.players if p.profile_id not in player1_ids]
             # Insert at the beginning
             team.players.insert(0, player)
 
@@ -120,7 +123,7 @@ class Map:
             def team_info(team: Team):
                 if not team.players:
                     return ("Unknown", "")
-                alias = team.players[0].name_raw
+                alias = team.players[0].name_lp if team.players[0].name_lp else team.players[0].name_raw
                 civ = team.players[0].civilization_lp
                 winner = team.result_type == 1
                 return (alias, civ, winner)

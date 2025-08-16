@@ -34,10 +34,10 @@ def get_participants(data, with_flag=False) -> str:
     result = ""
     for idx, node in enumerate(entries, start=1):
         name = node["entrant"]["participants"][0]["gamerTag"]
-        line = f"|p{idx}={name}"
+        line = f"|p{idx}={name} |p{idx}flag="
         if with_flag:
             flag = node["entrant"]["participants"][0]["user"]["location"]["country"]
-            line += f" |p{idx}flag={flag}"
+            line += f"{flag}"
         result += line + "<br />"
 
     return result
