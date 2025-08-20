@@ -1,4 +1,5 @@
-from utils.static import load_data
+import settings
+from utils.static import load_data_json, load_data_pickle, save_data_json
 
 
 CIVILIZATIONS = {
@@ -20,19 +21,27 @@ CIVILIZATIONS = {
     2121952: "ord",
     5000002: "knt",
     5000003: "hol",
+    1: "mac",
+    2: "goh",
+    3: "sen",
+    4: "tug",
 }
 
 
 def get_Players() -> dict[int, str]:
-    data = load_data("players.json")
+    data = load_data_pickle("players.pkl")
+
+    if settings.DEBUG:
+        save_data_json("players.json", data)
+
     # Convert keys from string to int
     int_keys_data = {int(k): v for k, v in data.items()}
     return int_keys_data
 
 
 def get_Maps() -> dict[str, str]:
-    return load_data("maps.json")
+    return load_data_json("maps.json")
 
 
 def get_Draft() -> dict[str, str]:
-    return load_data("draft.json")
+    return load_data_json("draft.json")

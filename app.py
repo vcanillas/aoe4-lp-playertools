@@ -20,7 +20,7 @@ def add_player():
     players[new_id] = new_value
 
     sorted_maps = dict(sorted(players.items(), key=lambda item: item[1].lower()))
-    static.save_data("players.json", sorted_maps)
+    static.save_data_pickle("players.pkl", sorted_maps)
     return jsonify({"message": "Player added"}), 201
 
 
@@ -42,7 +42,7 @@ def add_map():
     maps[new_id] = new_value
 
     sorted_maps = dict(sorted(maps.items(), key=lambda item: item[1]))
-    static.save_data("maps.json", sorted_maps)
+    static.save_data_json("maps.json", sorted_maps)
     return jsonify({"message": "Map added"}), 201
 
 
@@ -68,7 +68,7 @@ def add_draft():
     new_value = request.json.get("value")
     drafts[new_key] = new_value
 
-    static.save_data("draft.json", drafts)
+    static.save_data_json("draft.json", drafts)
     return jsonify({"message": "Draft added"}), 201
 
 

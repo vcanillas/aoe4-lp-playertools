@@ -1,4 +1,4 @@
-import json, os
+import json, os, pickle
 from datetime import datetime
 
 
@@ -93,7 +93,7 @@ def decode_zlib_base64_tojson(encoded_data):
 
 
 @staticmethod
-def load_data(filename: str):
+def load_data_json(filename: str):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(base_dir, "..", "data", filename)
     with open(data_path, "r", encoding="utf-8") as f:
@@ -101,8 +101,23 @@ def load_data(filename: str):
 
 
 @staticmethod
-def save_data(filename: str, data):
+def save_data_json(filename: str, data):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(base_dir, "..", "data", filename)
     with open(data_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+@staticmethod
+def load_data_pickle(filename: str):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(base_dir, "..", "data", filename)
+    with open(data_path, "rb") as f:
+        return pickle.load(f)
+
+@staticmethod
+def save_data_pickle(filename: str, data):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(base_dir, "..", "data", filename)
+    with open(data_path, "wb") as f:
+        pickle.dump(data, f)

@@ -30,7 +30,7 @@ def search_players(text: str) -> dict[str, Any]:
             "profile_id": player.get("profile_id"),
             "country": player.get("country"),
             "steam_id": player.get("steam_id"),
-            "lp_name" : lp_players.get(player.get("profile_id"), '')
+            "lp_name": lp_players.get(player.get("profile_id"), ""),
         }
         result.append(result_player)
 
