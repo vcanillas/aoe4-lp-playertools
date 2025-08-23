@@ -48,7 +48,7 @@
         <button class="button" onclick="onClickReverseLP()">Reverse</button>
 
         <br />
-        <span id="lpDateTime"></span> <button class="button" onclick="onClickCopyLpDateTime()">Copy DateTime</button>
+        <span id="lpDateTime"></span> <button class="button" onclick="onClickCopyLpDateTime(this)">Copy DateTime</button>
         <br />
         <span id="lpOpponent1"></span> <br />
         <span id="lpOpponent2"></span> <button class="button" onclick="onClickViewGames()">View Games</button>
@@ -120,6 +120,7 @@
 
             <!-- 1. Games Button and Dropdown -->
             <button class="button">Draft</button>
+            <div id="draftLink"></div>
             <div id="draftListResult"></div>
         </form>
     </div>

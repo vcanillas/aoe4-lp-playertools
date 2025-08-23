@@ -19,6 +19,52 @@ library.json = {
             .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
             .replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(jsonLine, library.json.replacer);
+    },
+    // New method to create a table from JSON data
+    createTable: function (jsonData, containerId) {
+        if (!Array.isArray(jsonData) || jsonData.length === 0) {
+            console.error("Invalid or empty JSON data"); return;
+        }
+
+        var container = document.getElementById(containerId);
+        if (!container) { console.error("Container element not found"); return; }
+
+        // Create table element
+        var table = document.createElement("table");
+        table.className = "jsonTable"
+
+        // Extract keys (titles) from the first object
+        var keys = Object.keys(jsonData[0]);
+
+        // Create header row
+        var thead = document.createElement("thead");
+        var headerRow = document.createElement("tr");
+        keys.forEach(function (key) {
+            var th = document.createElement("th");
+            th.textContent = key;
+            th.className = "jsonTable"
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Create body rows
+        var tbody = document.createElement("tbody");
+        jsonData.forEach(function (item) {
+            var row = document.createElement("tr");
+            keys.forEach(function (key) {
+                var td = document.createElement("td");
+                td.className = "jsonTable"
+                td.textContent = item[key] !== undefined ? item[key] : "";
+                row.appendChild(td);
+            });
+            tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+
+        // Clear previous content and append new table
+        container.innerHTML = "";
+        container.appendChild(table);
     }
 };
 
@@ -138,9 +184,13 @@ function onClickGamesBtn(button) {
         .finally(() => removeIsInfo(button));
 }
 
-function onClickCopyLpDateTime() {
+function onClickCopyLpDateTime(button) {
+    addIsInfo(button);
     const text = document.getElementById('lpDateTime').innerHTML;
     navigator.clipboard.writeText(text);
+    setTimeout(() => {
+        removeIsInfo(button);
+    }, 500);
 }
 
 function onClickCopyToClipboard() {
@@ -370,14 +420,31 @@ function updateDraftUI() {
 
 function onSubmitDraftForm(e) {
     e.preventDefault();
+
+    const button = e.target.querySelector('button');
+    addIsInfo(button);
+
     const selectElement = document.getElementById('draftSelect');
     const preset = selectElement.value;
     const key = selectElement.options[selectElement.selectedIndex].text;
 
-    document.getElementById('draftListResult').innerHTML = `
+    document.getElementById('draftLink').innerHTML = `
     ${key} - <br />
     <a href="https://aoe4world.com/api/v0/esports/drafts?preset=${preset}" target="_blank">https://aoe4world.com/api/v0/esports/drafts?preset=${preset}</a></p>
     `;
+
+    fetch(`/draft?preset=${preset}`, {
+        method: 'GET'
+    })
+        .then(response => response.text())
+        .then(data => {
+            var jsonData = JSON.parse(data);
+            library.json.createTable(jsonData, "draftListResult");
+
+            // document.getElementById('draftListResult').innerHTML = data;
+        })
+        .catch(error => alert('Error: ' + error))
+        .finally(() => removeIsInfo(button));
 }
 
 function onSubmitAddDraftForm(e) {

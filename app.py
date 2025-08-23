@@ -16,7 +16,7 @@ def add_player():
     new_id = int(request.json.get("id"))
     new_value = request.json.get("value").strip()
     if new_id in players:
-        return jsonify({"error": "ID already exists"}), 400
+        return jsonify({"error": "ID already exists"}), 409
     players[new_id] = new_value
 
     sorted_maps = dict(sorted(players.items(), key=lambda item: item[1].lower()))
@@ -38,7 +38,7 @@ def add_map():
     maps = reference.get_Maps()
 
     if new_id in maps:
-        return jsonify({"error": "ID already exists"}), 400
+        return jsonify({"error": "ID already exists"}), 409
     maps[new_id] = new_value
 
     sorted_maps = dict(sorted(maps.items(), key=lambda item: item[1]))
@@ -77,11 +77,18 @@ def get_drafts():
     return reference.get_Draft()
 
 
+@app.route("/draft", methods=["GET"])
+def search_drafts():
+    preset = request.args.get("preset")
+    result = AOE4WorldAPIClient.get_drafts(preset)
+    return jsonify(result)
+
+
 ## Home Part
 
 
 @app.route("/players", methods=["GET"])
-def get_players():
+def get_players_unique():
     unique_players = {}
     for key, value in reference.get_Players().items():
         if value not in unique_players.values():
@@ -103,14 +110,16 @@ def game_route():
 
         player_reference = players.get(player_id)
         if player_reference:
-            players_ids = [key for key, value in players.items() if value == player_reference]
+            players_ids = [
+                key for key, value in players.items() if value == player_reference
+            ]
         else:
             players_ids = [player_id]
 
     maps = RelicAPIClient.get_recent_match(players_ids=players_ids)
 
     map_dicts = [item.to_dict() for item in maps]
-    all_players = get_all_players(maps, get_players())
+    all_players = get_all_players(maps, get_players_unique())
 
     return jsonify({"players": all_players, "maps": map_dicts})
 
