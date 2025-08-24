@@ -1,32 +1,40 @@
-import json, os, pickle
 from datetime import datetime
 
 
 @staticmethod
-def _to_dict_recursive(obj):
-    if isinstance(obj, dict):
-        return {k: _to_dict_recursive(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [_to_dict_recursive(item) for item in obj]
-    elif hasattr(obj, "__dict__"):  # Check if it's an object with attributes
-        return _to_dict_recursive(obj.__dict__)
-    else:
-        return obj
-
-
-@staticmethod
-def format_timestamp(
-    timestamp, timezone_str="GMT", display_abbr=False, round_to_nearest_15=False
+def format_date(
+    date, timezone_str="GMT", display_abbr=False, round_to_nearest_15=False
 ):
     import pytz
     from datetime import datetime, timedelta
 
-    if timestamp is None:
+    if date is None:
         return ""
 
-    # Convert timestamp to datetime in specified timezone
-    tz = pytz.timezone(timezone_str)
-    dt = datetime.fromtimestamp(timestamp, tz)
+    # If timestamp is a string (ISO 8601), parse it
+    if isinstance(date, str):
+        # Parse ISO 8601 string, assuming UTC if ends with Z
+        try:
+            # Remove 'Z' if present and parse as UTC
+            if date.endswith("Z"):
+                dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
+                dt = dt.replace(tzinfo=pytz.UTC)
+            else:
+                # For other ISO formats, you might want to handle differently
+                dt = datetime.fromisoformat(date)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=pytz.UTC)
+        except ValueError:
+            # Fallback: parse without microseconds or handle error
+            try:
+                dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
+                dt = dt.replace(tzinfo=pytz.UTC)
+            except Exception:
+                return ""
+    else:
+        # Convert timestamp (assumed to be Unix timestamp) to datetime in timezone
+        tz = pytz.timezone(timezone_str)
+        dt = datetime.fromtimestamp(date, tz)
 
     if round_to_nearest_15:
         minutes = dt.minute
@@ -52,6 +60,7 @@ def format_timestamp(
         return f"{date_str} {{{{Abbr/{abbr}}}}}"
     else:
         return date_str
+
 
 @staticmethod
 def difference_timestamp(start_time: int, completion_time: int):
@@ -90,34 +99,3 @@ def decode_zlib_base64_tojson(encoded_data):
         except:
             break
     return None
-
-
-@staticmethod
-def load_data_json(filename: str):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(base_dir, "..", "data", filename)
-    with open(data_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-@staticmethod
-def save_data_json(filename: str, data):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(base_dir, "..", "data", filename)
-    with open(data_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
-
-
-@staticmethod
-def load_data_pickle(filename: str):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(base_dir, "..", "data", filename)
-    with open(data_path, "rb") as f:
-        return pickle.load(f)
-
-@staticmethod
-def save_data_pickle(filename: str, data):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(base_dir, "..", "data", filename)
-    with open(data_path, "wb") as f:
-        pickle.dump(data, f)

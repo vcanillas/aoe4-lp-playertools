@@ -1,10 +1,11 @@
 import requests
+
 import settings
 
 START_GG_API_URL = "https://api.start.gg/gql/alpha"
 
 
-def get_standings(event_id: int):
+def get_event_standings(event_id: int):
 
     query = """
 query EventStandings($eventId: ID!, $page: Int!, $perPage: Int!) {
@@ -44,8 +45,7 @@ query EventStandings($eventId: ID!, $page: Int!, $perPage: Int!) {
     response = requests.post(START_GG_API_URL, json=payload, headers=headers)
 
     if response.status_code == 200:
-        data = response.json()
-        return data
+        return response.json()
     else:
         raise (
             f"Query failed to run by returning code of {response.status_code}. {response.text}"

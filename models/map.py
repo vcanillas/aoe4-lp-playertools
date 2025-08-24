@@ -1,47 +1,11 @@
 from typing import List
-from utils import static, lp
-import settings
-
-class LPItem:
-    def __init__(self):
-        self.content = None
-        self.date = None
-        self.map = None
+from models.lp_item import LPItem
+from models.team import Team
+from models.base_model import BaseModel
+from utils import static
 
 
-class Player:
-    def __init__(self):
-        self.profile_id = None
-        self.name_raw = None
-        self.name_lp = None
-        self.name = None
-        # self.name = None
-        self.civilization_id = None
-        self.civilization_lp = None
-
-    def set_lp_name(self):
-        self.name_lp = lp.get_player_name_lp(self.profile_id, self.name_raw, False)
-        self.name = lp.get_player_name_lp(self.profile_id, self.name_raw, True)
-
-    def set_civilization_id(self, value):
-        self.civilization_id = value
-        self.civilization_lp = lp.get_civilization_lp(value)
-
-    def to_dict(self):
-        return static._to_dict_recursive(self)
-
-
-class Team:
-    def __init__(self):
-        self.team_id = None
-        self.result_type = None
-        self.players: List[Player] = []
-
-    def to_dict(self):
-        return static._to_dict_recursive(self)
-
-
-class Map:
+class Map(BaseModel):
     def __init__(self):
         self.matchtype_id = None
         self.start_game_time = None
@@ -55,30 +19,6 @@ class Map:
         self.summary = None
         self.lp: LPItem = LPItem()
         self.teams: List[Team] = []
-
-    def set_start_game_time(self, value):
-        self.start_game_time = value
-        self.date = static.format_timestamp(value, timezone_str="CET")
-        self.lp.date = static.format_timestamp(
-            value, display_abbr=True, round_to_nearest_15=True
-        )
-
-    def set_option_raw(self, value):
-        option = static.decode_zlib_base64_tojson(value)
-
-        if option is not None:
-            self.map_alias = option.get("localizedMapName")
-            self.map_name_raw = option.get("mapName")
-            self.lp.map = lp.get_map_lp(
-                self.map_name_raw, self.map_alias, unknown=False
-            )
-            self.map_name = lp.get_map_lp(self.map_name_raw, self.map_alias)
-            
-            if settings.DEBUG:
-                self.option_raw = option
-
-    def to_dict(self):
-        return static._to_dict_recursive(self)
 
     def complete_data(self, player1_id: List[int]):
 
@@ -123,7 +63,11 @@ class Map:
             def team_info(team: Team):
                 if not team.players:
                     return ("Unknown", "")
-                alias = team.players[0].name_lp if team.players[0].name_lp else team.players[0].name_raw
+                alias = (
+                    team.players[0].name_lp
+                    if team.players[0].name_lp
+                    else team.players[0].name_raw
+                )
                 civ = team.players[0].civilization_lp
                 winner = team.result_type == 1
                 return (alias, civ, winner)
@@ -133,6 +77,7 @@ class Map:
 
             # Set the summary string
             self.summary = (
+                f"{'⏳ ' if self.completion_time is None else ''}"
                 f"{'' if len(self.teams[0].players) == 1 else 'Multi - '}"
                 f"{self.date} "
                 f"{alias1} {'👑 ' if winner1 else ''} ({lp1}) --- "
@@ -184,7 +129,10 @@ class Map:
             self.lp.content = output
 
         def set_duration():
-            self.duration = static.difference_timestamp(self.start_game_time, self.completion_time)
+            if self.completion_time is not None:
+                self.duration = static.difference_timestamp(
+                    self.start_game_time, self.completion_time
+                )
 
         if len(self.teams) > 1:
             reorder(player1_id)

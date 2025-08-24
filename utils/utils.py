@@ -1,9 +1,9 @@
 from typing import List
-import model
+from models.map import Map
 
 
 @staticmethod
-def get_all_players(matches: List[model.Map], players: dict[int, str]):
+def get_all_players(matches: List[Map], players: dict[int, str]):
     # Make a shallow copy of PLAYERS to avoid modifying the original list
     updated_players = players.copy()
 

@@ -166,7 +166,8 @@ function onClickGamesBtn(button) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             player_id: document.getElementById("playerSelect").value,
-            player_id2: document.getElementById("playerTextBox").value
+            player_id2: document.getElementById("playerTextBox").value,
+            live_game: document.getElementById("playerCheckbox").checked
         }),
     })
         .then(response => response.json())
