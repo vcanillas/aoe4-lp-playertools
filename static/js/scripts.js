@@ -233,7 +233,7 @@ function onClickReverseLP() {
 
     // Swap winner
     const winner = keyValues['winner'];
-    keyValues['winner'] = winner === '1' ? '2' : '1';
+    keyValues['winner'] = winner === '1' ? '2' : winner === '2' ? '1' : '';
 
     // Swap civs
     const civs1 = keyValues['civs1'];

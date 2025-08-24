@@ -10,6 +10,8 @@ def format_date(
 
     if date is None:
         return ""
+    
+    target_tz = pytz.timezone(timezone_str)
 
     # If timestamp is a string (ISO 8601), parse it
     if isinstance(date, str):
@@ -24,17 +26,19 @@ def format_date(
                 dt = datetime.fromisoformat(date)
                 if dt.tzinfo is None:
                     dt = dt.replace(tzinfo=pytz.UTC)
+            
+            dt = dt.astimezone(target_tz)
         except ValueError:
             # Fallback: parse without microseconds or handle error
             try:
                 dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
-                dt = dt.replace(tzinfo=pytz.UTC)
+                # dt = dt.replace(tzinfo=pytz.UTC)
             except Exception:
                 return ""
+            
     else:
         # Convert timestamp (assumed to be Unix timestamp) to datetime in timezone
-        tz = pytz.timezone(timezone_str)
-        dt = datetime.fromtimestamp(date, tz)
+        dt = datetime.fromtimestamp(date, target_tz)
 
     if round_to_nearest_15:
         minutes = dt.minute
