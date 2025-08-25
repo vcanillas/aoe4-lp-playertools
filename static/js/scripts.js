@@ -156,7 +156,6 @@ function onChangeGamesSelect() {
     }
 }
 
-
 function onClickGamesBtn(button) {
 
     addIsInfo(button);
@@ -467,26 +466,104 @@ function onSubmitAddDraftForm(e) {
 
 // Events Tournament
 
-function onSubmitTournamentForm(e) {
+async function onSubmitTournamentForm(e) {
     e.preventDefault();
-    
+
     const button = e.target.querySelector('button');
     addIsInfo(button);
 
     const value = document.getElementById('playerTournamentArea').value;
+    try {
 
-   fetch(`/tournament`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ players: value })
-    })
-        .then(response => response.text())
-        .then(data => {
-            var jsonData = JSON.parse(data);
-            library.json.createTable(jsonData, "draftListResult");
-        })
-        .catch(error => alert('Error: ' + error))
-        .finally(() => removeIsInfo(button));
+        const response = fetch(`/tournament`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ players: value })
+        });
+
+        const TOURNAMENT = await response.json();
+
+        // Create a Map of existing checkboxes by match_id to preserve their state
+        const checkboxStates = {};
+
+        // Save current checkbox states
+        document.querySelectorAll('input[type="checkbox"][data-match-id]').forEach(cb => {
+            const matchId = cb.getAttribute('data-match-id');
+            checkboxStates[matchId] = cb.checked;
+        });
+
+        // Create a map of existing rows by match_id for easy update
+        const existingRows = {};
+        document.querySelectorAll('tr[data-match-id]').forEach(row => {
+            const matchId = row.getAttribute('data-match-id');
+            existingRows[matchId] = row;
+        });
+
+        // Process each object in MAP
+        MAP.forEach(match => {
+            const matchId = match.matchtype_id;
+            let row;
+
+            if (existingRows[matchId]) {
+                // Update existing row
+                row = existingRows[matchId];
+            } else {
+                // Create new row
+                row = document.createElement('tr');
+                row.setAttribute('data-match-id', matchId);
+                // Checkbox cell
+                const checkboxCell = document.createElement('td');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.setAttribute('data-match-id', matchId);
+                // Set previous state if exists
+                if (checkboxStates.hasOwnProperty(matchId)) {
+                    checkbox.checked = checkboxStates[matchId];
+                } else {
+                    checkbox.checked = false; // default
+                }
+                // Add event listener for coloring
+                checkbox.addEventListener('change', () => toggleRowColor(checkbox));
+                // Initialize row color
+                toggleRowColor(checkbox);
+                
+                checkboxCell.appendChild(checkbox);
+                row.appendChild(checkboxCell);
+
+                // Other columns
+                ['status', 'startdate', 'player1', 'player2', 'summary'].forEach(field => {
+                    const cell = document.createElement('td');
+                    cell.setAttribute('class', field);
+                    row.appendChild(cell);
+                });
+
+                tableBody.appendChild(row);
+                existingRows[matchId] = row;
+            }
+
+            // Update row data
+            row.querySelector('.status').textContent = match.duration;
+            row.querySelector('.startdate').textContent = match.start_game_time;
+            row.querySelector('.player1').textContent = match.player1;
+            row.querySelector('.player2').textContent = match.player2;
+            row.querySelector('.summary').textContent = match.summary;
+        });
+
+        removeIsInfo(button);
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+
+}
+
+function toggleRowColor(checkbox) {
+  const row = checkbox.closest('tr');
+  if (checkbox.checked) {
+    row.style.backgroundColor = 'lightgray';
+  } else {
+    row.style.backgroundColor = '';
+  }
 }

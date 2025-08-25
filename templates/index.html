@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    
+
 </head>
 
 <body class="dark-theme">
@@ -50,7 +50,8 @@
         <button class="button" onclick="onClickReverseLP()">Reverse</button>
 
         <br />
-        <span id="lpDateTime"></span> <button class="button" onclick="onClickCopyLpDateTime(this)">Copy DateTime</button>
+        <span id="lpDateTime"></span> <button class="button" onclick="onClickCopyLpDateTime(this)">Copy
+            DateTime</button>
         <br />
         <span id="lpOpponent1"></span> <br />
         <span id="lpOpponent2"></span> <button class="button" onclick="onClickViewGames()">View Games</button>
@@ -132,7 +133,23 @@
             <textarea id="playerTournamentArea"></textarea>
             <br />
             <button class="button" type="submit">Update</button>
-            <div id="tournamentResultList"></div>
+
+            <table id="matchesTable">
+                <thead>
+                    <tr>
+                        <th>Unmap</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>Player 1</th>
+                        <th>Player 2</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+
             <textarea id="lpTournamentTextArea"></textarea>
         </form>
     </div>
