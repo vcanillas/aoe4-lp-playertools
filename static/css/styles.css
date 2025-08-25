@@ -48,7 +48,7 @@ h2 {
 	width: 900px;
 }
 
-#mapTextArea {
+.textArea {
 	width: 300px;
 	height: 100px;
 	margin: 10px 0;

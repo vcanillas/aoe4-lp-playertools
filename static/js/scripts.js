@@ -440,8 +440,6 @@ function onSubmitDraftForm(e) {
         .then(data => {
             var jsonData = JSON.parse(data);
             library.json.createTable(jsonData, "draftListResult");
-
-            // document.getElementById('draftListResult').innerHTML = data;
         })
         .catch(error => alert('Error: ' + error))
         .finally(() => removeIsInfo(button));
@@ -474,8 +472,7 @@ async function onSubmitTournamentForm(e) {
 
     const value = document.getElementById('playerTournamentArea').value;
     try {
-
-        const response = fetch(`/tournament`, {
+        const response = await fetch(`/tournament`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -483,9 +480,12 @@ async function onSubmitTournamentForm(e) {
             body: JSON.stringify({ players: value })
         });
 
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+        }
+
         const TOURNAMENT = await response.json();
 
-        // Create a Map of existing checkboxes by match_id to preserve their state
         const checkboxStates = {};
 
         // Save current checkbox states
@@ -501,8 +501,8 @@ async function onSubmitTournamentForm(e) {
             existingRows[matchId] = row;
         });
 
-        // Process each object in MAP
-        MAP.forEach(match => {
+        // Process each object in TOURNAMENT
+        TOURNAMENT.maps.forEach(match => {
             const matchId = match.matchtype_id;
             let row;
 
@@ -513,6 +513,7 @@ async function onSubmitTournamentForm(e) {
                 // Create new row
                 row = document.createElement('tr');
                 row.setAttribute('data-match-id', matchId);
+
                 // Checkbox cell
                 const checkboxCell = document.createElement('td');
                 const checkbox = document.createElement('input');
@@ -526,11 +527,12 @@ async function onSubmitTournamentForm(e) {
                 }
                 // Add event listener for coloring
                 checkbox.addEventListener('change', () => toggleRowColor(checkbox));
-                // Initialize row color
-                toggleRowColor(checkbox);
                 
                 checkboxCell.appendChild(checkbox);
                 row.appendChild(checkboxCell);
+
+                // Initialize row color
+                toggleRowColor(checkbox);
 
                 // Other columns
                 ['status', 'startdate', 'player1', 'player2', 'summary'].forEach(field => {
@@ -539,6 +541,7 @@ async function onSubmitTournamentForm(e) {
                     row.appendChild(cell);
                 });
 
+                const tableBody = document.getElementById('tournamentTableBody');
                 tableBody.appendChild(row);
                 existingRows[matchId] = row;
             }
@@ -546,8 +549,8 @@ async function onSubmitTournamentForm(e) {
             // Update row data
             row.querySelector('.status').textContent = match.duration;
             row.querySelector('.startdate').textContent = match.start_game_time;
-            row.querySelector('.player1').textContent = match.player1;
-            row.querySelector('.player2').textContent = match.player2;
+            row.querySelector('.player1').textContent = match.teams[0]?.players.map(p => p.name).join(', ') || '';
+            row.querySelector('.player2').textContent = match.teams[1]?.players.map(p => p.name).join(', ') || '';
             row.querySelector('.summary').textContent = match.summary;
         });
 
@@ -556,14 +559,13 @@ async function onSubmitTournamentForm(e) {
     } catch (error) {
         console.error('Error fetching data:', error);
     }
-
 }
 
 function toggleRowColor(checkbox) {
-  const row = checkbox.closest('tr');
-  if (checkbox.checked) {
-    row.style.backgroundColor = 'lightgray';
-  } else {
-    row.style.backgroundColor = '';
-  }
+      const row = checkbox.closest('tr');
+      if (checkbox.checked) {
+        row.style.backgroundColor = 'lightgray';
+      } else {
+        row.style.backgroundColor = '';
+      }
 }

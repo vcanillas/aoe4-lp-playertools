@@ -43,7 +43,7 @@
         <br />
 
         <!-- Liquipedia textarea to fill -->
-        <textarea id="mapTextArea"></textarea>
+        <textarea id="mapTextArea" class="textArea"></textarea>
 
         <button class="button" onclick="onClickCopyToClipboard()">Copy<span id="validCopy"
                 style="display:none;">✅</span></button>
@@ -130,14 +130,14 @@
     <div class="tab-content" id="tab4">
         <h2>Tournament</h2>
         <form id="AddDraftForm" onsubmit="onSubmitTournamentForm(event)">
-            <textarea id="playerTournamentArea"></textarea>
+            <textarea id="playerTournamentArea" class="textArea"></textarea>
             <br />
             <button class="button" type="submit">Update</button>
 
-            <table id="matchesTable">
+            <table id="matchesTable" class="jsonTable">
                 <thead>
                     <tr>
-                        <th>Unmap</th>
+                        <th> - </th>
                         <th>Status</th>
                         <th>Start Date</th>
                         <th>Player 1</th>
@@ -145,7 +145,7 @@
                         <th>Summary</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tournamentTableBody">
                     <!-- Rows will be dynamically inserted here -->
                 </tbody>
             </table>
