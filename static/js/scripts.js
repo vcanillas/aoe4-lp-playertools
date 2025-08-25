@@ -464,3 +464,29 @@ function onSubmitAddDraftForm(e) {
         .then(() => refreshDrafts())
         .catch(error => alert('Error: ' + error));
 }
+
+// Events Tournament
+
+function onSubmitTournamentForm(e) {
+    e.preventDefault();
+    
+    const button = e.target.querySelector('button');
+    addIsInfo(button);
+
+    const value = document.getElementById('playerTournamentArea').value;
+
+   fetch(`/tournament`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ players: value })
+    })
+        .then(response => response.text())
+        .then(data => {
+            var jsonData = JSON.parse(data);
+            library.json.createTable(jsonData, "draftListResult");
+        })
+        .catch(error => alert('Error: ' + error))
+        .finally(() => removeIsInfo(button));
+}

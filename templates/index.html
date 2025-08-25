@@ -22,6 +22,7 @@
         <button class="tab-btn button is-text is-active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
         <button class="tab-btn button is-text" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
         <button class="tab-btn button is-text" data-tab="tab3" onclick="onClickTabs(this)">Draft</button>
+        <button class="tab-btn button is-text" data-tab="tab4" onclick="onClickTabs(this)">Tournament</button>
         <button id="themeButton" class="button is-text" onclick="onClickThemeToggle()">Switch theme</button>
     </div>
     <div class="tab-content active" id="tab1">
@@ -123,6 +124,16 @@
             <button class="button">Draft</button>
             <div id="draftLink"></div>
             <div id="draftListResult"></div>
+        </form>
+    </div>
+    <div class="tab-content" id="tab4">
+        <h2>Tournament</h2>
+        <form id="AddDraftForm" onsubmit="onSubmitTournamentForm(event)">
+            <textarea id="playerTournamentArea"></textarea>
+            <br />
+            <button class="button" type="submit">Update</button>
+            <div id="tournamentResultList"></div>
+            <textarea id="lpTournamentTextArea"></textarea>
         </form>
     </div>
 </body>
