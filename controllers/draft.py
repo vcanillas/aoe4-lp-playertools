@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from models import reference
 from repositories.json_repository import JsonRepository
 from services.adapters.aoe4world_adapter import AOE4WorldAdapter
+from services.adapters.aoe2cm_adapter import AOE2CaptainModeAdapter
 
 draft_bp = Blueprint("draft", __name__)
 
@@ -29,4 +30,11 @@ def get_drafts():
 def search_drafts():
     preset = request.args.get("preset")
     result = AOE4WorldAdapter.get_drafts(preset)
+    return jsonify(result)
+
+
+@draft_bp.route("/draft/<string:draft_id>", methods=["GET"])
+def draft_details(draft_id):
+    result = AOE2CaptainModeAdapter.get_draft_detail(draft_id)
+
     return jsonify(result)

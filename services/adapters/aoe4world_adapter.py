@@ -7,7 +7,8 @@ from models.team import Team
 from services.clients import aoe4world_client
 from utils import static
 
-REF_TYPE = RefType.AOE4WORLD 
+REF_TYPE = RefType.AOE4WORLD
+
 
 class AOE4WorldAdapter:
 
@@ -37,7 +38,8 @@ class AOE4WorldAdapter:
         result = []
         for draft in api_result["drafts"]:
             drafts = {
-                "draft": "http://aoe2cm.net/draft/" + draft.get("draft"),
+                "draft_id": draft.get("draft"),
+                "draft_link": "http://aoe2cm.net/draft/" + draft.get("draft"),
                 "draft_name": draft.get("preset_name"),
                 "player_1": draft.get("host_name"),
                 "player_2": draft.get("guest_name"),
@@ -78,12 +80,10 @@ class AOE4WorldAdapter:
                 match.map_alias = game.get("map")
                 match.map_name_raw = game.get("map")
                 match.lp.map = match.lp.get_map_lp(
-                    REF_TYPE,
-                    match.map_name_raw, match.map_alias, unknown=False
+                    REF_TYPE, match.map_name_raw, match.map_alias, unknown=False
                 )
                 match.map_name = match.lp.get_map_lp(
-                    REF_TYPE,
-                    match.map_name_raw, match.map_alias
+                    REF_TYPE, match.map_name_raw, match.map_alias
                 )
 
                 for index, teams in enumerate(game.get("teams", [])):

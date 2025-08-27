@@ -19,52 +19,6 @@ library.json = {
             .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
             .replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(jsonLine, library.json.replacer);
-    },
-    // New method to create a table from JSON data
-    createTable: function (jsonData, containerId) {
-        if (!Array.isArray(jsonData) || jsonData.length === 0) {
-            console.error("Invalid or empty JSON data"); return;
-        }
-
-        var container = document.getElementById(containerId);
-        if (!container) { console.error("Container element not found"); return; }
-
-        // Create table element
-        var table = document.createElement("table");
-        table.className = "jsonTable"
-
-        // Extract keys (titles) from the first object
-        var keys = Object.keys(jsonData[0]);
-
-        // Create header row
-        var thead = document.createElement("thead");
-        var headerRow = document.createElement("tr");
-        keys.forEach(function (key) {
-            var th = document.createElement("th");
-            th.textContent = key;
-            th.className = "jsonTable"
-            headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-
-        // Create body rows
-        var tbody = document.createElement("tbody");
-        jsonData.forEach(function (item) {
-            var row = document.createElement("tr");
-            keys.forEach(function (key) {
-                var td = document.createElement("td");
-                td.className = "jsonTable"
-                td.textContent = item[key] !== undefined ? item[key] : "";
-                row.appendChild(td);
-            });
-            tbody.appendChild(row);
-        });
-        table.appendChild(tbody);
-
-        // Clear previous content and append new table
-        container.innerHTML = "";
-        container.appendChild(table);
     }
 };
 
@@ -436,13 +390,84 @@ function onSubmitDraftForm(e) {
     fetch(`/draft?preset=${preset}`, {
         method: 'GET'
     })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            var jsonData = JSON.parse(data);
-            library.json.createTable(jsonData, "draftListResult");
+            const tbody = document.getElementById('draftTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(d => {
+                const row = document.createElement('tr');
+                row.className = "jsonTable"
+
+                // date
+                const dateTd = document.createElement('td');
+                dateTd.textContent = d.date || '';
+                row.appendChild(dateTd);
+
+                // Id
+                const idTd = document.createElement('td');
+                idTd.textContent = d.draft_id || '';
+                row.appendChild(idTd);
+
+                // Draft link
+                const linkTd = document.createElement('td');
+                const linkA = document.createElement('a');
+                linkA.href = d.draft_link;
+                linkA.target = '_blank';
+                linkA.textContent = d.draft_link;
+                linkTd.appendChild(linkA);
+                row.appendChild(linkTd);
+
+                // Draft Name with <details>
+                const nameTd = document.createElement('td');
+                const details = document.createElement('details');
+                const summary = document.createElement('summary');
+                summary.textContent = d.draft_name || 'Loading...';
+                const hiddenContent = document.createElement('p');
+                hiddenContent.textContent = 'Click to load details...';
+
+                details.appendChild(summary);
+                details.appendChild(hiddenContent);
+                nameTd.appendChild(details);
+                row.appendChild(nameTd);
+
+                // Add toggle event listener
+                details.addEventListener('toggle', () => {
+                    if (details.open && hiddenContent.textContent === 'Click to load details...') {
+                        // Fetch details
+                        fetchDraftDetails(d.draft_id, details, summary, hiddenContent);
+                    }
+                });
+
+                // Player 1
+                const p1Td = document.createElement('td');
+                p1Td.textContent = d.player_1 || '';
+                row.appendChild(p1Td);
+
+                // Player 2
+                const p2Td = document.createElement('td');
+                p2Td.textContent = d.player_2 || '';
+                row.appendChild(p2Td);
+                tbody.appendChild(row);
+            });
         })
         .catch(error => alert('Error: ' + error))
         .finally(() => removeIsInfo(button));
+}
+
+function fetchDraftDetails(draftId, detailsElem, summaryElem, contentElem) {
+    fetch(`/draft/${draftId}`)
+        .then(res => res.json())
+        .then(data => {
+            // summaryElem.textContent = data.title || 'Details';
+            contentElem.innerHTML = '';
+            const pre = document.createElement('pre');
+            pre.textContent = JSON.stringify(data, null, 2);
+            contentElem.appendChild(pre);
+        })
+        .catch(err => {
+            contentElem.textContent = 'Error loading details';
+        });
 }
 
 function onSubmitAddDraftForm(e) {
@@ -527,7 +552,7 @@ async function onSubmitTournamentForm(e) {
                 }
                 // Add event listener for coloring
                 checkbox.addEventListener('change', () => toggleRowColor(checkbox));
-                
+
                 checkboxCell.appendChild(checkbox);
                 row.appendChild(checkboxCell);
 
@@ -562,10 +587,10 @@ async function onSubmitTournamentForm(e) {
 }
 
 function toggleRowColor(checkbox) {
-      const row = checkbox.closest('tr');
-      if (checkbox.checked) {
+    const row = checkbox.closest('tr');
+    if (checkbox.checked) {
         row.style.backgroundColor = 'lightgray';
-      } else {
+    } else {
         row.style.backgroundColor = '';
-      }
+    }
 }

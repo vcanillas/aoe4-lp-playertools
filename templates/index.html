@@ -124,7 +124,22 @@
             <!-- 1. Games Button and Dropdown -->
             <button class="button">Draft</button>
             <div id="draftLink"></div>
-            <div id="draftListResult"></div>
+
+            <table id="draftTable" class="jsonTable">
+                <thead>
+                    <tr>
+                        <th>date</th>
+                        <th>Id</th>
+                        <th>Draft link</th>
+                        <th>Draft Name</th>
+                        <th>Player 1</th>
+                        <th>Player 2</th>
+                    </tr>
+                </thead>
+                <tbody id="draftTableBody">
+                    <!-- Rows will be dynamically inserted here -->
+                </tbody>
+            </table>
         </form>
     </div>
     <div class="tab-content" id="tab4">
