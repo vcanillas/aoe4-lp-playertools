@@ -50,7 +50,7 @@ def add_map():
 
 @admin_bp.route("/participants", methods=["GET"])
 def get_participant():
-    event_id = int(request.args.get("id"))
+    event_name = request.args.get("id")
     with_flag = request.args.get("with_flag", "0") == "1"
 
-    return StartGGAdapter.get_standings(event_id=event_id, with_flag=with_flag)
+    return StartGGAdapter.get_standings(event_name=event_name, with_flag=with_flag)

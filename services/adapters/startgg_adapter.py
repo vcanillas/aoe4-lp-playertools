@@ -1,10 +1,13 @@
-from ..clients.startgg_client import get_event_standings
+from ..clients.startgg_client import get_event_standings, get_event_id
 
 
 class StartGGAdapter:
 
     @staticmethod
-    def get_standings(event_id: int, with_flag=False):
+    def get_standings(event_name: int, with_flag=False):
+
+        data_event_id = get_event_id(event_name)
+        event_id = data_event_id["data"]["event"]["id"]
 
         data = get_event_standings(event_id=event_id)
         entries = data["data"]["event"]["standings"]["nodes"]
