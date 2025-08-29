@@ -89,7 +89,7 @@ class Map(BaseModel):
 
             multi = False
 
-            winning_team_index = None
+            winning_team_index = ''
             for i, team in enumerate(self.teams):
                 if len(team.players) > 1:
                     multi = True

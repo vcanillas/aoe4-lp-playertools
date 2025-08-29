@@ -35,16 +35,16 @@ h2 {
 	/* Make it bold, optional */
 }
 
-#playerSelect {
+#PlayerSelect {
 	width: 300px;
 	margin: 10px 0;
 }
 
-#themeButton {
+#SwitchThemeButton {
 	float: right;
 }
 
-#gamesSelect {
+#GamesSelect {
 	width: 900px;
 }
 
@@ -54,11 +54,11 @@ h2 {
 	margin: 10px 0;
 }
 
-#jsonArea {
+#JsonTextArea {
 	white-space: pre;
 }
 
-#lpOpponent1 {
+#LPOpponent1Span {
 	font-weight: bold;
 }
 
@@ -80,7 +80,7 @@ pre {
 	
 }
 
-#jsonArea{
+#JsonTextArea{
 	color: white;
 }
 

@@ -17,116 +17,108 @@
         const staticUrl = "{{ url_for('static', filename='') }}";
     </script>
 
-    <!-- <a href="./admin">Go to Admin Page</a> <br /> -->
     <div class="tab-buttons">
-        <button class="tab-btn button is-text is-active" data-tab="tab1" onclick="onClickTabs(this)">Index</button>
-        <button class="tab-btn button is-text" data-tab="tab2" onclick="onClickTabs(this)">Admin</button>
-        <button class="tab-btn button is-text" data-tab="tab3" onclick="onClickTabs(this)">Draft</button>
-        <button class="tab-btn button is-text" data-tab="tab4" onclick="onClickTabs(this)">Tournament</button>
-        <button id="themeButton" class="button is-text" onclick="onClickThemeToggle()">Switch theme</button>
+        <button class="tab-btn button is-text is-active" data-tab="tab1" onclick="OnClickTabs(this)">Index</button>
+        <button class="tab-btn button is-text" data-tab="tab2" onclick="OnClickTabs(this)">Admin</button>
+        <button class="tab-btn button is-text" data-tab="tab3" onclick="OnClickTabs(this)">Draft</button>
+        <button class="tab-btn button is-text" data-tab="tab4" onclick="OnClickTabs(this)">Tournament</button>
+        <button id="SwitchThemeButton" class="button is-text" onclick="OnClickThemeToggle()">Switch theme</button>
     </div>
     <div class="tab-content active" id="tab1">
 
-        <!-- Player dropdown (for 'Get Details') -->
-        <label for="playerSelect">Select Player:</label>
-        <select id="playerSelect"></select>
-        <input type="text" id="playerTextBox" name="playerTextBox" title="Id of the player">
-        <input type="checkbox" id="playerCheckbox" name="playerCheckbox" title="Live Game">
+        <label for="PlayerSelect">Select Player:</label>
+        <select id="PlayerSelect"></select>
+        <input type="text" id="PlayerTextBox" name="PlayerTextBox" title="Id of the player">
+        <input type="checkbox" id="PlayerCheckbox" name="PlayerCheckbox" title="Live Game">
 
-        <!-- 1. Games Button and Dropdown -->
-        <button class="button" id="gamesBtn" onclick="onClickGamesBtn(this)">Games</button>
-        <br />
+        <button class="button" id="GamesButton" onclick="OnClickGamesButton(this)">Games</button>
+        <br>
 
-        <select id="gamesSelect" name="gamesSelect" size="10">
-        </select>
+        <select id="GamesSelect" name="GamesSelect" size="10"></select>
+        <br>
 
-        <br />
+        <textarea id="LPMapTextArea" class="textArea"></textarea>
 
-        <!-- Liquipedia textarea to fill -->
-        <textarea id="mapTextArea" class="textArea"></textarea>
+        <button class="button" onclick="OnClickCopyToClipboardMapLP()">Copy<span id="ValidCopySpan" style="display:none;">✅</span></button>
+        <button class="button" onclick="OnClickReverseMapLP()">Reverse</button>
+        <br>
 
-        <button class="button" onclick="onClickCopyToClipboard()">Copy<span id="validCopy"
-                style="display:none;">✅</span></button>
-        <button class="button" onclick="onClickReverseLP()">Reverse</button>
-
-        <br />
-        <span id="lpDateTime"></span> <button class="button" onclick="onClickCopyLpDateTime(this)">Copy
+        <span id="LPDateSpan"></span> <button class="button" onclick="OnClickCopyLPDateSpan(this)">Copy
             DateTime</button>
-        <br />
-        <span id="lpOpponent1"></span> <br />
-        <span id="lpOpponent2"></span> <button class="button" onclick="onClickViewGames()">View Games</button>
-        <br />
+        <br>
 
-        <!-- Map details display -->
-        <pre><code id="jsonArea"></code></pre>
+        <span id="LPOpponent1Span"></span> <br>
+        <span id="LPOpponent2Span"></span> <button class="button" onclick="OnClickViewGamesOpponent2()()">View Games</button>
+        <br>
+
+        <pre><code id="JsonTextArea"></code></pre>
     </div>
     <div class="tab-content" id="tab2">
-        <h2>Add Maps</h2>
-        <form id="mapsForm" onsubmit="onSubmitMapsForm(event)">
-            <label for="mapKey">Key:</label>
-            <input type="text" id="mapKey" name="id" required>
+        <h2>Add Map</h2>
+        <form id="AddMapForm" onsubmit="OnSubmitAddMapForm(event)">
+            <label for="AddMapKeyTextBox">Key:</label>
+            <input type="text" id="AddMapKeyTextBox" name="AddMapKeyTextBox" required>
             <br>
-            <label for="mapValue">Value:</label>
-            <input type="text" id="mapValue" name="value" required>
+            <label for="AddMapValueTextBox">Value:</label>
+            <input type="text" id="AddMapValueTextBox" name="AddMapValueTextBox" required>
             <br>
             <button class="button" type="submit">Add Map</button>
         </form>
-        <hr />
-        <h2>Add Players</h2>
-        <form id="playersForm" onsubmit="onSubmitPlayersForm(event)">
-            <label for="playerKey">Key:</label>
-            <input type="text" id="playerKey" name="id" required>
+        <hr>
+        <h2>Add Player</h2>
+        <form id="AddPlayerForm" onsubmit="OnSubmitAddPlayerForm(event)">
+            <label for="AddPlayerKeyTextBox">Key:</label>
+            <input type="text" id="AddPlayerKeyTextBox" name="AddPlayerKeyTextBox" required>
             <br>
-            <label for="playerValue">Value:</label>
-            <input type="text" id="playerValue" name="value" required>
+            <label for="AddPlayerValueTextBox">Value:</label>
+            <input type="text" id="AddPlayerValueTextBox" name="AddPlayerValueTextBox" required>
             <br>
             <button class="button" type="submit">Add Player</button>
         </form>
-        <hr />
+        <hr>
         <h2>Search Players</h2>
-        <form id="searchPlayersForm" onsubmit="onSubmitSearchPlayersForm(event)">
-            <label for="searchPlayerValue">Search:</label>
-            <input type="text" id="searchPlayerValue" name="value" required>
-            <input type="checkbox" id="searchPlayerByIdCheckbox" name="searchById">
+        <form id="SearchPlayersForm" onsubmit="OnSubmitSearchPlayersForm(event)">
+            <label for="SearchPlayerTextBox">Search:</label>
+            <input type="text" id="SearchPlayerTextBox" name="SearchPlayerTextBox" required>
+            <input type="checkbox" id="SearchPlayersByIdCheckbox" name="SearchPlayersByIdCheckbox">
             <br>
+
             <button class="button" type="submit">Search Player</button>
-            <div id="searchPlayerResult"></div>
+            <div id="SearchPlayerResultDiv"></div>
         </form>
-        <hr />
+        <hr>
         <h2>Participant Start.gg</h2>
-        <form id="participantsListForm" onsubmit="onSubmitParticipantsListForm(event)">
-            <label for="eventIdValue">Search:</label>
-            <input type="text" id="eventIdValue" name="value" placeholder="tournament/.../event/..." required>
-            <label for="participantFlag">Flag:</label>
-            <input type="checkbox" id="participantFlag" name="flag">
+        <form id="ParticipantListForm" onsubmit="OnSubmitParticipantListForm(event)">
+            <label for="ParticipantListEventIdValueTextBox">Search:</label>
+            <input type="text" id="ParticipantListEventIdValueTextBox" name="ParticipantListEventIdValueTextBox" placeholder="tournament/.../event/..." required>
+            <label for="ParticipantListWithFlagCheckbox">Flag:</label>
+            <input type="checkbox" id="ParticipantListWithFlagCheckbox" name="ParticipantListWithFlagCheckbox">
             <br>
             <button class="button" type="submit">List Participant</button>
-            <div id="participantListResult"></div>
+            <div id="ParticipantListResultDiv"></div>
         </form>
     </div>
     <div class="tab-content" id="tab3">
         <h2>Add Drafts</h2>
-        <form id="AddDraftForm" onsubmit="onSubmitAddDraftForm(event)">
-            <label for="draftKey">Key:</label>
-            <input type="text" id="draftKey" name="id" required>
+        <form id="AddDraftForm" onsubmit="OnSubmitAddDraftForm(event)">
+            <label for="AddDraftKeyTextBox">Key:</label>
+            <input type="text" id="AddDraftKeyTextBox" name="AddDraftKeyTextBox" required>
             <br>
-            <label for="draftValue">Value:</label>
-            <input type="text" id="draftValue" name="value" required>
+            <label for="AddDraftValueTextBox">Value:</label>
+            <input type="text" id="AddDraftValueTextBox" name="AddDraftValueTextBox" required>
             <br>
             <button class="button" type="submit">Add Draft</button>
         </form>
-        <hr />
+        <hr>
         <h2>List Drafts</h2>
-        <form id="draftForm" onsubmit="onSubmitDraftForm(event)">
-            <!-- Player dropdown (for 'Get Details') -->
-            <label for="draftSelect">Select Draft:</label>
-            <select id="draftSelect"></select>
+        <form id="DraftListForm" onsubmit="OnSubmitDraftListForm(event)">
+            <label for="DraftListSelect">Select Draft:</label>
+            <select id="DraftListSelect"></select>
 
-            <!-- 1. Games Button and Dropdown -->
             <button class="button">Draft</button>
-            <div id="draftLink"></div>
+            <div id="DraftListLinkDiv"></div>
 
-            <table id="draftTable" class="jsonTable">
+            <table id="DraftListTable" class="jsonTable">
                 <thead>
                     <tr>
                         <th>date</th>
@@ -137,7 +129,7 @@
                         <th>Player 2</th>
                     </tr>
                 </thead>
-                <tbody id="draftTableBody">
+                <tbody id="DraftListTableBody">
                     <!-- Rows will be dynamically inserted here -->
                 </tbody>
             </table>
@@ -145,12 +137,12 @@
     </div>
     <div class="tab-content" id="tab4">
         <h2>Tournament</h2>
-        <form id="AddDraftForm" onsubmit="onSubmitTournamentForm(event)">
-            <textarea id="playerTournamentArea" class="textArea"></textarea>
-            <br />
+        <form id="TournamentForm" onsubmit="OnSubmitTournamentForm(event)">
+            <textarea id="PlayerTournamentTextArea" class="textArea"></textarea>
+            <br>
             <button class="button" type="submit">Update</button>
 
-            <table id="matchesTable" class="jsonTable">
+            <table id="TournamentResultTable" class="jsonTable">
                 <thead>
                     <tr>
                         <th> - </th>
@@ -161,12 +153,12 @@
                         <th>Summary</th>
                     </tr>
                 </thead>
-                <tbody id="tournamentTableBody">
+                <tbody id="TournamentResultTableBody">
                     <!-- Rows will be dynamically inserted here -->
                 </tbody>
             </table>
 
-            <textarea id="lpTournamentTextArea"></textarea>
+            <textarea id="TournamentLPTextArea"></textarea>
         </form>
     </div>
 </body>
