@@ -295,12 +295,13 @@ function onSubmitSearchPlayersForm(e) {
     addIsInfo(button);
 
     const value = document.getElementById('searchPlayerValue').value;
+    const byId = document.getElementById('searchPlayerByIdCheckbox').checked;
     fetch('/search_player', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ text: value })
+        body: JSON.stringify({ text: value, searchById: byId })
     })
         .then(response => response.text())
         .then(data => {

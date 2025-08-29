@@ -28,8 +28,14 @@ def add_player():
 
 @admin_bp.route("/search_player", methods=["POST"])
 def search_player():
-    text = request.json.get("text")
-    result = AOE4WorldAdapter.search_players(text)
+    text: str = request.json.get("text")
+    searchById: bool = request.json.get("searchById")
+
+    if searchById:
+        result = AOE4WorldAdapter.get_player(text)
+    else:
+        result = AOE4WorldAdapter.search_players(text)
+
     return jsonify(result)
 
 

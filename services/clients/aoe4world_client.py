@@ -21,6 +21,19 @@ def search_players(text: str) -> dict[str, Any]:
         raise ("Error:", response.status_code, response.text)
 
 
+def get_player(id: str):
+    url = AOE4WORLD_URL_API + "/v0/players/" + id
+
+    # Make the GET request
+    response = requests.get(url)
+
+    # Check and print response
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise ("Error:", response.status_code, response.text)
+
+
 @staticmethod
 def get_drafts(text: str) -> dict[str, Any]:
     url = AOE4WORLD_URL_API + "/v0/esports/drafts"

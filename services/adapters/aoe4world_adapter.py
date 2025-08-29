@@ -14,11 +14,11 @@ class AOE4WorldAdapter:
 
     @staticmethod
     def search_players(text: str):
-        api_result = aoe4world_client.search_players(text=text)
-
+        result = []
         lp_players = reference.get_Players()
 
-        result = []
+        api_result = aoe4world_client.search_players(text=text)
+
         for player in api_result["players"]:
             result_player = {
                 "name": player.get("name"),
@@ -28,6 +28,23 @@ class AOE4WorldAdapter:
                 "lp_name": lp_players.get(player.get("profile_id"), ""),
             }
             result.append(result_player)
+
+        return result
+
+    @staticmethod
+    def get_player(id: str):
+        result = []
+        lp_players = reference.get_Players()
+
+        api_result = aoe4world_client.get_player(id=id)
+        result_player = {
+            "name": api_result.get("name"),
+            "profile_id": api_result.get("profile_id"),
+            "country": api_result.get("country"),
+            "steam_id": api_result.get("steam_id"),
+            "lp_name": lp_players.get(api_result.get("profile_id"), ""),
+        }
+        result.append(result_player)
 
         return result
 
