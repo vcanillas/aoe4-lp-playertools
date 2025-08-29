@@ -23,7 +23,6 @@ def get_players_unique():
 
 @home_bp.route("/games", methods=["POST"])
 def game_route():
-
     data = request.get_json()
     player_id = int(data.get("player_id"))
 

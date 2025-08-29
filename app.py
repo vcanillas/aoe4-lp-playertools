@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from controllers import home_bp, admin_bp, draft_bp
+from controllers import home_bp, admin_bp, draft_bp, tournament_bp
 
 app = Flask(__name__)
 
@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.register_blueprint(home_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(draft_bp)
+app.register_blueprint(tournament_bp)
 
 
 @app.route("/")

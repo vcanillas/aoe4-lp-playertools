@@ -7,17 +7,18 @@ from models.team import Team
 from services.clients import aoe4world_client
 from utils import static
 
-REF_TYPE = RefType.AOE4WORLD 
+REF_TYPE = RefType.AOE4WORLD
+
 
 class AOE4WorldAdapter:
 
     @staticmethod
     def search_players(text: str):
-        api_result = aoe4world_client.search_players(text=text)
-
+        result = []
         lp_players = reference.get_Players()
 
-        result = []
+        api_result = aoe4world_client.search_players(text=text)
+
         for player in api_result["players"]:
             result_player = {
                 "name": player.get("name"),
@@ -31,13 +32,31 @@ class AOE4WorldAdapter:
         return result
 
     @staticmethod
+    def get_player(id: str):
+        result = []
+        lp_players = reference.get_Players()
+
+        api_result = aoe4world_client.get_player(id=id)
+        result_player = {
+            "name": api_result.get("name"),
+            "profile_id": api_result.get("profile_id"),
+            "country": api_result.get("country"),
+            "steam_id": api_result.get("steam_id"),
+            "lp_name": lp_players.get(api_result.get("profile_id"), ""),
+        }
+        result.append(result_player)
+
+        return result
+
+    @staticmethod
     def get_drafts(text: str) -> dict[str, Any]:
         api_result = aoe4world_client.get_drafts(text=text)
 
         result = []
         for draft in api_result["drafts"]:
             drafts = {
-                "draft": "http://aoe2cm.net/draft/" + draft.get("draft"),
+                "draft_id": draft.get("draft"),
+                "draft_link": "http://aoe2cm.net/draft/" + draft.get("draft"),
                 "draft_name": draft.get("preset_name"),
                 "player_1": draft.get("host_name"),
                 "player_2": draft.get("guest_name"),
@@ -78,12 +97,10 @@ class AOE4WorldAdapter:
                 match.map_alias = game.get("map")
                 match.map_name_raw = game.get("map")
                 match.lp.map = match.lp.get_map_lp(
-                    REF_TYPE,
-                    match.map_name_raw, match.map_alias, unknown=False
+                    REF_TYPE, match.map_name_raw, match.map_alias, unknown=False
                 )
                 match.map_name = match.lp.get_map_lp(
-                    REF_TYPE,
-                    match.map_name_raw, match.map_alias
+                    REF_TYPE, match.map_name_raw, match.map_alias
                 )
 
                 for index, teams in enumerate(game.get("teams", [])):

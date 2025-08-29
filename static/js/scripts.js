@@ -19,52 +19,6 @@ library.json = {
             .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
             .replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(jsonLine, library.json.replacer);
-    },
-    // New method to create a table from JSON data
-    createTable: function (jsonData, containerId) {
-        if (!Array.isArray(jsonData) || jsonData.length === 0) {
-            console.error("Invalid or empty JSON data"); return;
-        }
-
-        var container = document.getElementById(containerId);
-        if (!container) { console.error("Container element not found"); return; }
-
-        // Create table element
-        var table = document.createElement("table");
-        table.className = "jsonTable"
-
-        // Extract keys (titles) from the first object
-        var keys = Object.keys(jsonData[0]);
-
-        // Create header row
-        var thead = document.createElement("thead");
-        var headerRow = document.createElement("tr");
-        keys.forEach(function (key) {
-            var th = document.createElement("th");
-            th.textContent = key;
-            th.className = "jsonTable"
-            headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-
-        // Create body rows
-        var tbody = document.createElement("tbody");
-        jsonData.forEach(function (item) {
-            var row = document.createElement("tr");
-            keys.forEach(function (key) {
-                var td = document.createElement("td");
-                td.className = "jsonTable"
-                td.textContent = item[key] !== undefined ? item[key] : "";
-                row.appendChild(td);
-            });
-            tbody.appendChild(row);
-        });
-        table.appendChild(tbody);
-
-        // Clear previous content and append new table
-        container.innerHTML = "";
-        container.appendChild(table);
     }
 };
 
@@ -79,7 +33,7 @@ fetch('/players')
 
 refreshDrafts();
 
-function onClickThemeToggle() {
+function OnClickThemeToggle() {
     document.body.classList.toggle('dark-theme');
     const html = document.documentElement;
     const currentTheme = html.getAttribute('data-theme');
@@ -92,46 +46,46 @@ function updatePlayerUI() {
     const sortedPlayers = Object.entries(players)
         .sort(([, nameA], [, nameB]) => nameA.localeCompare(nameB)); // Sort by name
 
-    const playerSelect = document.getElementById("playerSelect");
-    playerSelect.innerHTML = ""; // Clear existing options
+    const PlayerSelect = document.getElementById("PlayerSelect");
+    PlayerSelect.innerHTML = ""; // Clear existing options
 
     sortedPlayers.forEach(([playerId, playerName]) => {
         const option = document.createElement('option');
         option.value = playerId;
         option.text = playerName;
-        playerSelect.appendChild(option);
+        PlayerSelect.appendChild(option);
     });
 }
 
 function updateGamesSelectUI() {
     if (!maps) return;  // Check if maps data exists
 
-    gamesSelect = document.getElementById('gamesSelect');
+    GamesSelect = document.getElementById('GamesSelect');
 
-    Object.keys(maps).forEach(mapKey => {
-        const map = maps[mapKey];
+    Object.keys(maps).forEach(AddMapKeyTextBox => {
+        const map = maps[AddMapKeyTextBox];
 
         const listItem = document.createElement('option');
-        listItem.textContent = map.summary; // Display the map name in the list
+        listItem.textContent = map.summary;
         listItem._mapData = map;
-        gamesSelect.appendChild(listItem);
+        GamesSelect.appendChild(listItem);
     });
 
-    gamesSelect.addEventListener('change', onChangeGamesSelect);
+    GamesSelect.addEventListener('change', onChangeGamesSelect);
 
     let player_id = maps[0].teams[0].players[0].profile_id;
-    document.getElementById("playerSelect").value = player_id; // Auto-selected on the listbox
+    document.getElementById("PlayerSelect").value = player_id; // Auto-selected on the listbox
 }
 
 function clearScreen() {
-    document.getElementById("playerTextBox").value = "";
-    document.getElementById('gamesSelect').innerHTML = "";
-    document.getElementById('gamesSelect').removeEventListener("change", onChangeGamesSelect)
-    document.getElementById('lpOpponent1').innerHTML = "";
-    document.getElementById('lpOpponent2').innerHTML = "";
-    document.getElementById('lpDateTime').innerHTML = "";
-    document.getElementById('mapTextArea').value = "";
-    document.getElementById('jsonArea').innerHTML = "";
+    document.getElementById("PlayerTextBox").value = "";
+    document.getElementById('GamesSelect').innerHTML = "";
+    document.getElementById('GamesSelect').removeEventListener("change", onChangeGamesSelect)
+    document.getElementById('LPOpponent1Span').innerHTML = "";
+    document.getElementById('LPOpponent2Span').innerHTML = "";
+    document.getElementById('LPDateSpan').innerHTML = "";
+    document.getElementById('LPMapTextArea').value = "";
+    document.getElementById('JsonTextArea').innerHTML = "";
 }
 
 function getIcons(civ, winner) {
@@ -141,23 +95,22 @@ function getIcons(civ, winner) {
 }
 
 function onChangeGamesSelect() {
-    const selectedIndex = gamesSelect.selectedIndex;
-    const selectedOption = gamesSelect.options[selectedIndex];
+    const selectedIndex = GamesSelect.selectedIndex;
+    const selectedOption = GamesSelect.options[selectedIndex];
 
     const selectedMap = selectedOption._mapData;
     if (selectedMap) {
-        currentMap = selectedMap; // Store for onClickViewGames()
+        currentMap = selectedMap; // Store for OnClickViewGamesOpponent2()()
 
-        document.getElementById('mapTextArea').value = selectedMap.lp.content;
-        document.getElementById('jsonArea').innerHTML = library.json.prettyPrint(selectedMap);
-        document.getElementById('lpDateTime').innerHTML = selectedMap.lp.date;
-        document.getElementById('lpOpponent1').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp, selectedMap.teams[0]) + selectedMap.teams[0].players[0].name;
-        document.getElementById('lpOpponent2').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp, selectedMap.teams[1]) + selectedMap.teams[1].players[0].name;
+        document.getElementById('LPMapTextArea').value = selectedMap.lp.content;
+        document.getElementById('JsonTextArea').innerHTML = library.json.prettyPrint(selectedMap);
+        document.getElementById('LPDateSpan').innerHTML = selectedMap.lp.date;
+        document.getElementById('LPOpponent1Span').innerHTML = getIcons(selectedMap.teams[0].players[0].civilization_lp, selectedMap.teams[0]) + selectedMap.teams[0].players[0].name;
+        document.getElementById('LPOpponent2Span').innerHTML = getIcons(selectedMap.teams[1].players[0].civilization_lp, selectedMap.teams[1]) + selectedMap.teams[1].players[0].name;
     }
 }
 
-
-function onClickGamesBtn(button) {
+function OnClickGamesButton(button) {
 
     addIsInfo(button);
 
@@ -165,9 +118,9 @@ function onClickGamesBtn(button) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            player_id: document.getElementById("playerSelect").value,
-            player_id2: document.getElementById("playerTextBox").value,
-            live_game: document.getElementById("playerCheckbox").checked
+            player_id: document.getElementById("PlayerSelect").value,
+            player_id2: document.getElementById("PlayerTextBox").value,
+            live_game: document.getElementById("PlayerCheckbox").checked
         }),
     })
         .then(response => response.json())
@@ -185,19 +138,19 @@ function onClickGamesBtn(button) {
         .finally(() => removeIsInfo(button));
 }
 
-function onClickCopyLpDateTime(button) {
+function OnClickCopyLPDateSpan(button) {
     addIsInfo(button);
-    const text = document.getElementById('lpDateTime').innerHTML;
+    const text = document.getElementById('LPDateSpan').innerHTML;
     navigator.clipboard.writeText(text);
     setTimeout(() => {
         removeIsInfo(button);
     }, 500);
 }
 
-function onClickCopyToClipboard() {
-    const text = document.getElementById('mapTextArea').value;
+function OnClickCopyToClipboardMapLP() {
+    const text = document.getElementById('LPMapTextArea').value;
     navigator.clipboard.writeText(text).then(() => {
-        const messageDiv = document.getElementById('validCopy');
+        const messageDiv = document.getElementById('ValidCopySpan');
         messageDiv.style.display = 'block';
         setTimeout(() => { messageDiv.style.display = 'none'; }, 2000);
     }).catch(() => {
@@ -217,8 +170,8 @@ function onClickCopyToClipboard() {
     });
 }
 
-function onClickReverseLP() {
-    const textarea = document.getElementById('mapTextArea');
+function OnClickReverseMapLP() {
+    const textarea = document.getElementById('LPMapTextArea');
     let text = textarea.value;
 
     // Parse lines
@@ -231,17 +184,15 @@ function onClickReverseLP() {
         keyValues[key.trim()] = value;
     });
 
-    // Swap winner
+    // swap
     const winner = keyValues['winner'];
     keyValues['winner'] = winner === '1' ? '2' : winner === '2' ? '1' : '';
 
-    // Swap civs
     const civs1 = keyValues['civs1'];
     const civs2 = keyValues['civs2'];
     keyValues['civs1'] = civs2;
     keyValues['civs2'] = civs1;
 
-    // Swap players if available
     if ('players1' in keyValues) {
         const players1 = keyValues['players1'];
         const players2 = keyValues['players2'];
@@ -259,35 +210,28 @@ ${'players2' in keyValues ? `        |players2=${keyValues['players2']}\n` : ''}
     textarea.value = newTemplate;
 
     // Swap opponent names in UI
-    const opponent1 = document.getElementById('lpOpponent1').innerHTML;
-    const opponent2 = document.getElementById('lpOpponent2').innerHTML;
-    document.getElementById('lpOpponent1').innerHTML = opponent2;
-    document.getElementById('lpOpponent2').innerHTML = opponent1;
+    const opponent1 = document.getElementById('LPOpponent1Span').innerHTML;
+    const opponent2 = document.getElementById('LPOpponent2Span').innerHTML;
+    document.getElementById('LPOpponent1Span').innerHTML = opponent2;
+    document.getElementById('LPOpponent2Span').innerHTML = opponent1;
 }
 
-function onClickViewGames() {
-    document.getElementById("playerTextBox").value = currentMap.teams[1].players[0].profile_id;
-    onClickGamesBtn(document.getElementById('gamesBtn'));
+function OnClickViewGamesOpponent2() {
+    document.getElementById("PlayerTextBox").value = currentMap.teams[1].players[0].profile_id;
+    OnClickGamesButton(document.getElementById('GamesButton'));
 }
 
-function onClickTabs(button) {
+function OnClickTabs(button) {
     // Select all tab buttons and contents
     const buttons = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
 
-    // Remove 'active' class from all buttons
     buttons.forEach(btn => btn.classList.remove('is-active'));
-
-    // Add 'is-active' class to the clicked button
     button.classList.add('is-active');
 
-    // Get the target tab ID from data attribute
     const tabId = button.getAttribute('data-tab');
-
-    // Remove 'is-active' class from all tab contents
     contents.forEach(content => content.classList.remove('active'));
 
-    // Add 'is-active' class to the selected tab content
     const targetContent = document.getElementById(tabId);
     if (targetContent) {
         targetContent.classList.add('active');
@@ -304,10 +248,10 @@ function removeIsInfo(button) {
 
 // Events Admin
 
-function onSubmitMapsForm(e) {
+function OnSubmitAddMapForm(e) {
     e.preventDefault();
-    const key = document.getElementById('mapKey').value;
-    const value = document.getElementById('mapValue').value;
+    const key = document.getElementById('AddMapKeyTextBox').value;
+    const value = document.getElementById('AddMapValueTextBox').value;
     fetch('/map', {
         method: 'POST',
         headers: {
@@ -320,10 +264,10 @@ function onSubmitMapsForm(e) {
         .catch(error => alert('Error: ' + error));
 }
 
-function onSubmitPlayersForm(e) {
+function OnSubmitAddPlayerForm(e) {
     e.preventDefault();
-    const key = document.getElementById('playerKey').value;
-    const value = document.getElementById('playerValue').value;
+    const key = document.getElementById('AddPlayerKeyTextBox').value;
+    const value = document.getElementById('AddPlayerValueTextBox').value;
     fetch('/player', {
         method: 'POST',
         headers: {
@@ -336,18 +280,19 @@ function onSubmitPlayersForm(e) {
         .catch(error => alert('Error: ' + error));
 }
 
-function onSubmitSearchPlayersForm(e) {
+function OnSubmitSearchPlayersForm(e) {
     e.preventDefault();
     const button = e.target.querySelector('button');
     addIsInfo(button);
 
-    const value = document.getElementById('searchPlayerValue').value;
+    const value = document.getElementById('SearchPlayerTextBox').value;
+    const byId = document.getElementById('SearchPlayersByIdCheckbox').checked;
     fetch('/search_player', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ text: value })
+        body: JSON.stringify({ text: value, searchById: byId })
     })
         .then(response => response.text())
         .then(data => {
@@ -362,38 +307,38 @@ function onSubmitSearchPlayersForm(e) {
                 </p>`;
             });
 
-            document.getElementById('searchPlayerResult').innerHTML = htmlContent;
+            document.getElementById('SearchPlayerResultDiv').innerHTML = htmlContent;
         })
         .catch(error => alert('Error: ' + error))
         .finally(() => removeIsInfo(button));
 }
 
-function onSubmitParticipantsListForm(e) {
+function OnSubmitParticipantListForm(e) {
     e.preventDefault();
     const button = e.target.querySelector('button');
     addIsInfo(button);
 
-    const value = document.getElementById('eventIdValue').value;
-    const withFlag = document.getElementById('participantFlag').checked ? 1 : 0;
+    const value = document.getElementById('ParticipantListEventIdValueTextBox').value;
+    const withFlag = document.getElementById('ParticipantListWithFlagCheckbox').checked ? 1 : 0;
 
     fetch(`/participants?id=${value}&with_flag=${withFlag}`, {
         method: 'GET'
     })
         .then(response => response.text())
         .then(data => {
-            document.getElementById('participantListResult').innerHTML = data;
+            document.getElementById('ParticipantListResultDiv').innerHTML = data;
         })
         .catch(error => alert('Error: ' + error))
         .finally(() => removeIsInfo(button));
 }
 
 function onClickSelectPlayer(profileId) {
-    document.getElementById('playerTextBox').value = profileId; // or profileId if needed
+    document.getElementById('PlayerTextBox').value = profileId;
 
     const tab1Button = document.querySelector('.tab-btn[data-tab="tab1"]');
     if (tab1Button) { tab1Button.click(); }
 
-    return onClickGamesBtn(document.getElementById('gamesBtn'));
+    return OnClickGamesButton(document.getElementById('GamesButton'));
 }
 
 // Events Drafts
@@ -408,28 +353,28 @@ function refreshDrafts() {
 }
 
 function updateDraftUI() {
-    const draftSelect = document.getElementById("draftSelect");
-    draftSelect.innerHTML = ""; // Clear existing options
+    const DraftListSelect = document.getElementById("DraftListSelect");
+    DraftListSelect.innerHTML = "";
 
     Object.entries(drafts).forEach(([draftId, draftPreset]) => {
         const option = document.createElement('option');
         option.value = draftPreset;
         option.text = draftId;
-        draftSelect.appendChild(option);
+        DraftListSelect.appendChild(option);
     });
 }
 
-function onSubmitDraftForm(e) {
+function OnSubmitDraftListForm(e) {
     e.preventDefault();
 
     const button = e.target.querySelector('button');
     addIsInfo(button);
 
-    const selectElement = document.getElementById('draftSelect');
+    const selectElement = document.getElementById('DraftListSelect');
     const preset = selectElement.value;
     const key = selectElement.options[selectElement.selectedIndex].text;
 
-    document.getElementById('draftLink').innerHTML = `
+    document.getElementById('DraftListLinkDiv').innerHTML = `
     ${key} - <br />
     <a href="https://aoe4world.com/api/v0/esports/drafts?preset=${preset}" target="_blank">https://aoe4world.com/api/v0/esports/drafts?preset=${preset}</a></p>
     `;
@@ -437,21 +382,89 @@ function onSubmitDraftForm(e) {
     fetch(`/draft?preset=${preset}`, {
         method: 'GET'
     })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            var jsonData = JSON.parse(data);
-            library.json.createTable(jsonData, "draftListResult");
+            const tbody = document.getElementById('DraftListTableBody');
+            tbody.innerHTML = '';
 
-            // document.getElementById('draftListResult').innerHTML = data;
+            data.forEach(d => {
+                const row = document.createElement('tr');
+                row.className = "jsonTable"
+
+                // date
+                const dateTd = document.createElement('td');
+                dateTd.textContent = d.date || '';
+                row.appendChild(dateTd);
+
+                // Id
+                const idTd = document.createElement('td');
+                idTd.textContent = d.draft_id || '';
+                row.appendChild(idTd);
+
+                // Draft link
+                const linkTd = document.createElement('td');
+                const linkA = document.createElement('a');
+                linkA.href = d.draft_link;
+                linkA.target = '_blank';
+                linkA.textContent = d.draft_link;
+                linkTd.appendChild(linkA);
+                row.appendChild(linkTd);
+
+                // Draft Name with <details>
+                const nameTd = document.createElement('td');
+                const details = document.createElement('details');
+                const summary = document.createElement('summary');
+                summary.textContent = d.draft_name || 'Loading...';
+                const hiddenContent = document.createElement('p');
+                hiddenContent.textContent = 'Click to load details...';
+
+                details.appendChild(summary);
+                details.appendChild(hiddenContent);
+                nameTd.appendChild(details);
+                row.appendChild(nameTd);
+
+                // Add toggle event listener
+                details.addEventListener('toggle', () => {
+                    if (details.open && hiddenContent.textContent === 'Click to load details...') {
+                        // Fetch details
+                        fetchDraftDetails(d.draft_id, details, summary, hiddenContent);
+                    }
+                });
+
+                // Player 1
+                const p1Td = document.createElement('td');
+                p1Td.textContent = d.player_1 || '';
+                row.appendChild(p1Td);
+
+                // Player 2
+                const p2Td = document.createElement('td');
+                p2Td.textContent = d.player_2 || '';
+                row.appendChild(p2Td);
+                tbody.appendChild(row);
+            });
         })
         .catch(error => alert('Error: ' + error))
         .finally(() => removeIsInfo(button));
 }
 
-function onSubmitAddDraftForm(e) {
+function fetchDraftDetails(draftId, detailsElem, summaryElem, contentElem) {
+    fetch(`/draft/${draftId}`)
+        .then(res => res.json())
+        .then(data => {
+            contentElem.innerHTML = '';
+            const pre = document.createElement('pre');
+            pre.textContent = JSON.stringify(data, null, 2);
+            contentElem.appendChild(pre);
+        })
+        .catch(err => {
+            contentElem.textContent = 'Error loading details';
+        });
+}
+
+function OnSubmitAddDraftForm(e) {
     e.preventDefault();
-    const key = document.getElementById('draftKey').value;
-    const value = document.getElementById('draftValue').value;
+    const key = document.getElementById('AddDraftKeyTextBox').value;
+    const value = document.getElementById('AddDraftValueTextBox').value;
     fetch('/draft', {
         method: 'POST',
         headers: {
@@ -463,4 +476,112 @@ function onSubmitAddDraftForm(e) {
         .then(data => alert(data))
         .then(() => refreshDrafts())
         .catch(error => alert('Error: ' + error));
+}
+
+// Events Tournament
+
+async function OnSubmitTournamentForm(e) {
+    e.preventDefault();
+
+    const button = e.target.querySelector('button');
+    addIsInfo(button);
+
+    const value = document.getElementById('PlayerTournamentTextArea').value;
+    try {
+        const response = await fetch(`/tournament`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ players: value })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+        }
+
+        const TOURNAMENT = await response.json();
+
+        const checkboxStates = {};
+
+        // Save current checkbox states
+        document.querySelectorAll('input[type="checkbox"][data-match-id]').forEach(cb => {
+            const matchId = cb.getAttribute('data-match-id');
+            checkboxStates[matchId] = cb.checked;
+        });
+
+        // Create a map of existing rows by match_id for easy update
+        const existingRows = {};
+        document.querySelectorAll('tr[data-match-id]').forEach(row => {
+            const matchId = row.getAttribute('data-match-id');
+            existingRows[matchId] = row;
+        });
+
+        // Process each object in TOURNAMENT
+        TOURNAMENT.maps.forEach(match => {
+            const matchId = match.matchtype_id;
+            let row;
+
+            if (existingRows[matchId]) {
+                // Update existing row
+                row = existingRows[matchId];
+            } else {
+                // Create new row
+                row = document.createElement('tr');
+                row.setAttribute('data-match-id', matchId);
+
+                // Checkbox cell
+                const checkboxCell = document.createElement('td');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.setAttribute('data-match-id', matchId);
+                // Set previous state if exists
+                if (checkboxStates.hasOwnProperty(matchId)) {
+                    checkbox.checked = checkboxStates[matchId];
+                } else {
+                    checkbox.checked = false; // default
+                }
+                // Add event listener for coloring
+                checkbox.addEventListener('change', () => toggleRowColor(checkbox));
+
+                checkboxCell.appendChild(checkbox);
+                row.appendChild(checkboxCell);
+
+                // Initialize row color
+                toggleRowColor(checkbox);
+
+                // Other columns
+                ['status', 'startdate', 'player1', 'player2', 'summary'].forEach(field => {
+                    const cell = document.createElement('td');
+                    cell.setAttribute('class', field);
+                    row.appendChild(cell);
+                });
+
+                const tableBody = document.getElementById('TournamentResultTableBody');
+                tableBody.appendChild(row);
+                existingRows[matchId] = row;
+            }
+
+            // Update row data
+            row.querySelector('.status').textContent = match.duration;
+            row.querySelector('.startdate').textContent = match.start_game_time;
+            row.querySelector('.player1').textContent = match.teams[0]?.players.map(p => p.name).join(', ') || '';
+            row.querySelector('.player2').textContent = match.teams[1]?.players.map(p => p.name).join(', ') || '';
+            row.querySelector('.summary').textContent = match.summary;
+        });
+
+        removeIsInfo(button);
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function toggleRowColor(checkbox) {
+    const row = checkbox.closest('tr');
+    if (checkbox.checked) {
+        row.style.backgroundColor = 'lightgray';
+    } else {
+        row.style.backgroundColor = '';
+    }
 }

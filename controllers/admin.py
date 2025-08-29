@@ -28,8 +28,14 @@ def add_player():
 
 @admin_bp.route("/search_player", methods=["POST"])
 def search_player():
-    text = request.json.get("text")
-    result = AOE4WorldAdapter.search_players(text)
+    text: str = request.json.get("text")
+    searchById: bool = request.json.get("searchById")
+
+    if searchById:
+        result = AOE4WorldAdapter.get_player(text)
+    else:
+        result = AOE4WorldAdapter.search_players(text)
+
     return jsonify(result)
 
 
@@ -50,7 +56,7 @@ def add_map():
 
 @admin_bp.route("/participants", methods=["GET"])
 def get_participant():
-    event_id = int(request.args.get("id"))
+    event_name = request.args.get("id")
     with_flag = request.args.get("with_flag", "0") == "1"
 
-    return StartGGAdapter.get_standings(event_id=event_id, with_flag=with_flag)
+    return StartGGAdapter.get_standings(event_name=event_name, with_flag=with_flag)
