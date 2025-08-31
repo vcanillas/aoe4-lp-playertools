@@ -48,10 +48,21 @@ h2 {
 	width: 900px;
 }
 
+#AddDraftValueTextBox {
+	width: 300px;
+}
+
 .textArea {
 	width: 300px;
 	height: 100px;
 	margin: 10px 0;
+}
+
+.buttonsTournament
+{
+	cursor: pointer;
+	border: none;
+	background: none;
 }
 
 #JsonTextArea {

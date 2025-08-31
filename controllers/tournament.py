@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, request, jsonify
-from typing import List
+from typing import List, Tuple
 from collections import defaultdict
 import re
 
@@ -19,20 +19,19 @@ tournament_bp = Blueprint("tournament", __name__)
 def update_tournament():
     players_input = request.json.get("players")
     players = parse_input(players_input)
-    players_ids = get_players_from_name(players)
+    players_ids, missing_players = get_players_from_name(players)
 
     maps = RelicAdapter.get_recent_match(players_ids=players_ids)
     # maps_dicts = [item.to_dict() for item in maps]
 
     maps_live = AOE4WorldAdapter.get_live_games(players_ids=players_ids)
     if maps_live is not None:
-
         maps = maps + maps_live
 
     maps_filtered = filtered_map(maps)
     map_dicts = [item.to_dict() for item in maps_filtered]
 
-    return jsonify({"maps": map_dicts})
+    return jsonify({"maps": map_dicts, "missing": missing_players})
 
 
 def parse_input(input_str: str) -> List[str]:
@@ -55,7 +54,7 @@ def parse_input(input_str: str) -> List[str]:
     return players
 
 
-def get_players_from_name(players_name: List[str]) -> List[int]:
+def get_players_from_name(players_name: List[str]) -> Tuple[List[int], List[str]]:
     players_reference = reference.get_Players()
 
     name_to_ids = defaultdict(list)
@@ -67,7 +66,9 @@ def get_players_from_name(players_name: List[str]) -> List[int]:
     for name in players_name:
         result_ids.extend(name_to_ids.get(name, []))
 
-    return result_ids
+    missing_players = [name for name in players_name if name not in name_to_ids]
+
+    return result_ids, missing_players
 
 
 def filtered_map(map_dicts: List[Map]) -> List[Map]:
@@ -84,7 +85,7 @@ def filtered_map(map_dicts: List[Map]) -> List[Map]:
         except ValueError:
             continue
 
-        if m_date >= now - timedelta(hours=10):
+        if m_date >= now - timedelta(hours=3):
             filtered_maps.append(map)
 
     latest_maps = {}
@@ -95,7 +96,7 @@ def filtered_map(map_dicts: List[Map]) -> List[Map]:
 
     # Sort the filtered maps by date, newest first (descending)
     sorted_maps = sorted(
-        filtered_maps,
+        latest_maps.values(),
         key=lambda m: datetime.strptime(m.date, "%B %d, %Y - %H:%M").replace(
             tzinfo=timezone.utc
         ),

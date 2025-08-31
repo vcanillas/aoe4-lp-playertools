@@ -39,8 +39,8 @@
 
         <textarea id="LPMapTextArea" class="textArea"></textarea>
 
-        <button class="button" onclick="OnClickCopyToClipboardMapLP()">Copy<span id="ValidCopySpan" style="display:none;">✅</span></button>
-        <button class="button" onclick="OnClickReverseMapLP()">Reverse</button>
+        <button class="button" onclick="OnClickCopyToClipboardMapLP('LPMapTextArea', 'ValidCopySpan')">Copy<span id="ValidCopySpan" style="display:none;">✅</span></button>
+        <button class="button" onclick="OnClickReverseMapLP('LPMapTextArea')">Reverse</button>
         <br>
 
         <span id="LPDateSpan"></span> <button class="button" onclick="OnClickCopyLPDateSpan(this)">Copy
@@ -48,7 +48,7 @@
         <br>
 
         <span id="LPOpponent1Span"></span> <br>
-        <span id="LPOpponent2Span"></span> <button class="button" onclick="OnClickViewGamesOpponent2()()">View Games</button>
+        <span id="LPOpponent2Span"></span> <button class="button" onclick="OnClickViewGamesOpponent2()">View Games</button>
         <br>
 
         <pre><code id="JsonTextArea"></code></pre>
@@ -136,15 +136,21 @@
         </form>
     </div>
     <div class="tab-content" id="tab4">
-        <h2>Tournament</h2>
+        <textarea id="TournamentLPTextArea" class="textArea"></textarea>
+        <button class="button" onclick="OnClickCopyToClipboardMapLP('TournamentLPTextArea', 'TournamentValidCopySpan')">Copy<span id="TournamentValidCopySpan" style="display:none;">✅</span></button>
+        <button class="button" onclick="OnClickReverseMapLP('TournamentLPTextArea')">Reverse</button>
+        <br>
+        <br>
         <form id="TournamentForm" onsubmit="OnSubmitTournamentForm(event)">
-            <textarea id="PlayerTournamentTextArea" class="textArea"></textarea>
+            <h2>Tournament</h2>
+            <textarea id="PlayerTournamentTextArea" class="textArea" required></textarea> <button class="button" type="submit">Update</button>
             <br>
-            <button class="button" type="submit">Update</button>
-
+            <div id="PlayerTournamentMissingDiv"></div>
             <table id="TournamentResultTable" class="jsonTable">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="TournamentSelectAllCheckbox" onChange="OnChangeTournamentSelectAllCheckbox(event)"></th>
+                        <th>🕰️</th>
                         <th> - </th>
                         <th>Status</th>
                         <th>Start Date</th>
@@ -157,8 +163,6 @@
                     <!-- Rows will be dynamically inserted here -->
                 </tbody>
             </table>
-
-            <textarea id="TournamentLPTextArea"></textarea>
         </form>
     </div>
 </body>

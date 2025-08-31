@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 
 
 @staticmethod
@@ -10,7 +11,7 @@ def format_date(
 
     if date is None:
         return ""
-    
+
     target_tz = pytz.timezone(timezone_str)
 
     # If timestamp is a string (ISO 8601), parse it
@@ -26,7 +27,7 @@ def format_date(
                 dt = datetime.fromisoformat(date)
                 if dt.tzinfo is None:
                     dt = dt.replace(tzinfo=pytz.UTC)
-            
+
             dt = dt.astimezone(target_tz)
         except ValueError:
             # Fallback: parse without microseconds or handle error
@@ -35,7 +36,7 @@ def format_date(
                 # dt = dt.replace(tzinfo=pytz.UTC)
             except Exception:
                 return ""
-            
+
     else:
         # Convert timestamp (assumed to be Unix timestamp) to datetime in timezone
         dt = datetime.fromtimestamp(date, target_tz)
@@ -103,3 +104,27 @@ def decode_zlib_base64_tojson(encoded_data):
         except:
             break
     return None
+
+
+@staticmethod
+def extract_map_name(full_name):
+    # Check if it's a crafted map
+    if full_name.startswith("Crafted Map"):
+        # Extract the part inside parentheses
+        match = re.search(r"\(([^)]+)\)", full_name)
+        if match:
+            inside_parentheses = match.group(1)
+            # If there's a hyphen inside the parentheses, get the part after hyphen
+            if "-" in inside_parentheses:
+                # e.g., "EGC - Holy Island"
+                parts = inside_parentheses.split("-")
+                return parts[-1].strip()
+            else:
+                # No hyphen, just return the whole inside part
+                return inside_parentheses.strip()
+        else:
+            # Fallback: return the full name
+            return full_name
+    else:
+        # For non-crafted map names, return as is
+        return full_name

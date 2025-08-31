@@ -147,31 +147,17 @@ function OnClickCopyLPDateSpan(button) {
     }, 500);
 }
 
-function OnClickCopyToClipboardMapLP() {
-    const text = document.getElementById('LPMapTextArea').value;
+function OnClickCopyToClipboardMapLP(itemName, itemValid) {
+    const text = document.getElementById(itemName).value;
     navigator.clipboard.writeText(text).then(() => {
-        const messageDiv = document.getElementById('ValidCopySpan');
+        const messageDiv = document.getElementById(itemValid);
         messageDiv.style.display = 'block';
         setTimeout(() => { messageDiv.style.display = 'none'; }, 2000);
-    }).catch(() => {
-        // fallback method
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        try {
-            document.execCommand('copy');
-            alert('Copied to clipboard!');
-        } catch (err) {
-            alert('Failed to copy.');
-        }
-        document.body.removeChild(textarea);
     });
 }
 
-function OnClickReverseMapLP() {
-    const textarea = document.getElementById('LPMapTextArea');
+function OnClickReverseMapLP(itemName) {
+    const textarea = document.getElementById(itemName);
     let text = textarea.value;
 
     // Parse lines
@@ -479,7 +465,6 @@ function OnSubmitAddDraftForm(e) {
 }
 
 // Events Tournament
-
 async function OnSubmitTournamentForm(e) {
     e.preventDefault();
 
@@ -487,6 +472,7 @@ async function OnSubmitTournamentForm(e) {
     addIsInfo(button);
 
     const value = document.getElementById('PlayerTournamentTextArea').value;
+
     try {
         const response = await fetch(`/tournament`, {
             method: 'POST',
@@ -496,36 +482,27 @@ async function OnSubmitTournamentForm(e) {
             body: JSON.stringify({ players: value })
         });
 
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-        }
-
         const TOURNAMENT = await response.json();
 
-        const checkboxStates = {};
+        document.getElementById('PlayerTournamentMissingDiv').innerHTML = TOURNAMENT.missing;
 
-        // Save current checkbox states
+
+        const checkboxStates = {};
         document.querySelectorAll('input[type="checkbox"][data-match-id]').forEach(cb => {
             const matchId = cb.getAttribute('data-match-id');
             checkboxStates[matchId] = cb.checked;
         });
 
-        // Create a map of existing rows by match_id for easy update
         const existingRows = {};
         document.querySelectorAll('tr[data-match-id]').forEach(row => {
-            const matchId = row.getAttribute('data-match-id');
-            existingRows[matchId] = row;
+            existingRows[row.getAttribute('data-match-id')] = row;
         });
 
-        // Process each object in TOURNAMENT
         TOURNAMENT.maps.forEach(match => {
             const matchId = match.matchtype_id;
-            let row;
+            let row = existingRows[matchId];
 
-            if (existingRows[matchId]) {
-                // Update existing row
-                row = existingRows[matchId];
-            } else {
+            if (!row) {
                 // Create new row
                 row = document.createElement('tr');
                 row.setAttribute('data-match-id', matchId);
@@ -535,20 +512,36 @@ async function OnSubmitTournamentForm(e) {
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.setAttribute('data-match-id', matchId);
-                // Set previous state if exists
-                if (checkboxStates.hasOwnProperty(matchId)) {
-                    checkbox.checked = checkboxStates[matchId];
-                } else {
-                    checkbox.checked = false; // default
-                }
-                // Add event listener for coloring
+                checkbox.checked = checkboxStates.hasOwnProperty(matchId) ? checkboxStates[matchId] : false;
                 checkbox.addEventListener('change', () => toggleRowColor(checkbox));
-
                 checkboxCell.appendChild(checkbox);
                 row.appendChild(checkboxCell);
 
-                // Initialize row color
-                toggleRowColor(checkbox);
+                // Timer button
+                const buttonTimerCell = document.createElement('td');
+                const copyTimerBtn = document.createElement('button');
+                copyTimerBtn.type = 'button';
+                copyTimerBtn.innerHTML = '🕒';
+                copyTimerBtn.classList.add('buttonsTournament');
+                copyTimerBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(match.lp.date);
+                });
+                buttonTimerCell.appendChild(copyTimerBtn);
+                row.appendChild(buttonTimerCell);
+
+                // LP button
+                const buttonLPCell = document.createElement('td');
+                const copyLPBtn = document.createElement('button');
+                copyLPBtn.type = 'button';
+                copyLPBtn.innerHTML = '📝';
+                copyLPBtn.classList.add('buttonsTournament', 'copyLPBtn');
+                copyLPBtn.setAttribute('data-content', match.lp.content);
+                copyLPBtn.addEventListener('click', () => {
+                    document.getElementById('TournamentLPTextArea').value = match.lp.content;
+                    navigator.clipboard.writeText(match.lp.content);
+                });
+                buttonLPCell.appendChild(copyLPBtn);
+                row.appendChild(buttonLPCell);
 
                 // Other columns
                 ['status', 'startdate', 'player1', 'player2', 'summary'].forEach(field => {
@@ -557,31 +550,107 @@ async function OnSubmitTournamentForm(e) {
                     row.appendChild(cell);
                 });
 
-                const tableBody = document.getElementById('TournamentResultTableBody');
-                tableBody.appendChild(row);
-                existingRows[matchId] = row;
+                document.getElementById('TournamentResultTableBody').appendChild(row);
+
+                // Initialize previous data attributes
+                row.setAttribute('data-prev-status', '');
+                row.setAttribute('data-prev-content', '');
             }
 
-            // Update row data
-            row.querySelector('.status').textContent = match.duration;
-            row.querySelector('.startdate').textContent = match.start_game_time;
+            // Retrieve previous data for comparison
+            const prevStatus = row.getAttribute('data-prev-status') ?? '';
+            const prevContent = row.getAttribute('data-prev-content') ?? '';
+
+            // Update fields
+            const statusCell = row.querySelector('.status');
+            const newStatus = match.duration;
+            statusCell.textContent = newStatus;
+
+            row.querySelector('.startdate').textContent = match.date;
             row.querySelector('.player1').textContent = match.teams[0]?.players.map(p => p.name).join(', ') || '';
             row.querySelector('.player2').textContent = match.teams[1]?.players.map(p => p.name).join(', ') || '';
             row.querySelector('.summary').textContent = match.summary;
+
+            // Update previous data attributes
+            row.setAttribute('data-prev-status', newStatus);
+            row.setAttribute('data-prev-content', match.lp.content);
+
+            // Handle copy button content update
+            const copyLPBtn = row.querySelector('.copyLPBtn');
+            const currentContent = match.lp.content;
+            const storedContent = copyLPBtn.getAttribute('data-content');
+
+            if (storedContent !== currentContent) {
+                // Reset event listener if content changed
+                copyLPBtn.replaceWith(copyLPBtn.cloneNode(true));
+                const newBtn = row.querySelector('.copyLPBtn');
+                newBtn.setAttribute('data-content', currentContent);
+                newBtn.addEventListener('click', () => {
+                    document.getElementById('TournamentLPTextArea').value = currentContent;
+                    navigator.clipboard.writeText(currentContent);
+                });
+            }
+
+            // Determine if this is a new row (no previous data)
+            const isNewLine = (prevStatus === '' && prevContent === '');
+
+            // Check if status changed
+            const prevStatusString = (prevStatus ?? 'null').toString();
+            const newStatusString = (newStatus ?? 'null').toString();
+
+            if (isNewLine) {
+                // New line: keep default background, no change
+                toggleRowColor(row.querySelector('input[type="checkbox"]'), false);
+            } else if (prevStatusString != newStatusString) {
+                // Status changed: uncheck and mark as changed
+                const checkbox = row.querySelector('input[type="checkbox"][data-match-id]');
+                checkbox.checked = false;
+                toggleRowColor(checkbox, true);
+            }
         });
 
-        removeIsInfo(button);
+        // Sort rows by date (descending)
+        const tableBody = document.getElementById('TournamentResultTableBody');
+        const rowsArray = Array.from(tableBody.querySelectorAll('tr'));
 
+        rowsArray.sort((a, b) => {
+            const dateA = parseCustomDate(a.querySelector('.startdate').textContent);
+            const dateB = parseCustomDate(b.querySelector('.startdate').textContent);
+            return dateB - dateA;
+        });
+
+        // Reinsert sorted rows
+        tableBody.innerHTML = '';
+        rowsArray.forEach(row => tableBody.appendChild(row));
+
+        removeIsInfo(button);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
+
+    function parseCustomDate(dateStr) {
+        const [datePart, timePart] = dateStr.split(' - ');
+        const formattedStr = `${datePart} ${timePart}`;
+        return new Date(formattedStr);
+    }
 }
 
-function toggleRowColor(checkbox) {
+function toggleRowColor(checkbox, isChanged = false) {
     const row = checkbox.closest('tr');
-    if (checkbox.checked) {
-        row.style.backgroundColor = 'lightgray';
+    if (isChanged) {
+        row.style.backgroundColor = 'darkgoldenrod';
+    } else if (checkbox.checked) {
+        row.style.backgroundColor = 'slategray';
     } else {
         row.style.backgroundColor = '';
     }
+}
+
+function OnChangeTournamentSelectAllCheckbox(event) {
+    const checkedStatus = event.target.checked;
+    const checkboxes = document.querySelectorAll('#TournamentResultTable tbody input[type="checkbox"][data-match-id]');
+    checkboxes.forEach(cb => {
+        cb.checked = checkedStatus;
+        toggleRowColor(cb); // Optional: update row color
+    });
 }
